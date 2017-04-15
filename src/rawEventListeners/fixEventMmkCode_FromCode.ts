@@ -59,6 +59,8 @@ namespace mmk.keyboard {
 	};
 
 	export function fixEventMmkCode_FromCode(event: KeyboardEvent) {
+		if (event.code === undefined) return;
+
 		var tmpMmkCode;
 		var m : RegExpMatchArray;
 

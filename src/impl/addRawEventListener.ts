@@ -22,9 +22,14 @@ namespace mmk.keyboard {
 		addRawEventListener(this, "keypress", fixEventMmkRepeat);
 
 		// add mmkCode field
-		addRawEventListener(this, "keyup",    fixEventMmkCode);
-		addRawEventListener(this, "keydown",  fixEventMmkCode);
-		addRawEventListener(this, "keypress", fixEventMmkCode);
+		addRawEventListener(this, "keyup",    fixEventMmkCode_FromCode);
+		addRawEventListener(this, "keydown",  fixEventMmkCode_FromCode);
+		addRawEventListener(this, "keypress", fixEventMmkCode_FromCode);
+
+		// add mmkKey field
+		addRawEventListener(this, "keyup",    fixEventMmkKey_FromUpDownKeyCode);
+		addRawEventListener(this, "keydown",  fixEventMmkKey_FromUpDownKeyCode);
+		addRawEventListener(this, "keypress", fixEventMmkKey_FromUpDownKeyCode);
 
 		// log to console based on mmk.keyboard.config settings
 		addRawEventListener(this, "keyup",    debugDumpKeyboardEvent);

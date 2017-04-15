@@ -18,5 +18,6 @@ interface KeyboardEvent {
 	code:    string; // Present in Chrome, but not in IE11
 
 	mmkRepeat: boolean; // IE11 lies and also makes 'repeat' immutable.
-	mmkCode:   string;  // "Consistent" code
+	mmkCode?:  string;  // "Physical" code - may be unavailable (e.g. IE11 gives us no way to get at real physical codes)
+	mmkKey?:   string;  // "Logical"  code
 }

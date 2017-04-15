@@ -14,7 +14,7 @@
 */
 
 namespace mmk.keyboard.Key {
-	// All legal mmkCode values.
+	// All legal mmkKey / mmkCode values.
 
 	// Function row
 	export const Escape      = "Escape"; export const Esc = "Escape";
@@ -35,24 +35,24 @@ namespace mmk.keyboard.Key {
 	export const ScrollLock  = "ScrollLock";
 
 	// Digits Row
-	export const Backquote = "Backquote";
-	export const Digit0 = "Digit0"; export const D0 = "Digit0";
-	export const Digit1 = "Digit1"; export const D1 = "Digit1";
-	export const Digit2 = "Digit2"; export const D2 = "Digit2";
-	export const Digit3 = "Digit3"; export const D3 = "Digit3";
-	export const Digit4 = "Digit4"; export const D4 = "Digit4";
-	export const Digit5 = "Digit5"; export const D5 = "Digit5";
-	export const Digit6 = "Digit6"; export const D6 = "Digit6";
-	export const Digit7 = "Digit7"; export const D7 = "Digit7";
-	export const Digit8 = "Digit8"; export const D8 = "Digit8";
-	export const Digit9 = "Digit9"; export const D9 = "Digit9";
-	export const Minus     = "Minus";
-	export const Equal     = "Equal";
+	export const Backquote = "Backquote"; Key["`"] = "Backquote";
+	export const Digit0 = "Digit0"; export const D0 = "Digit0"; Key["0"] = "Digit0";
+	export const Digit1 = "Digit1"; export const D1 = "Digit1"; Key["1"] = "Digit1";
+	export const Digit2 = "Digit2"; export const D2 = "Digit2"; Key["2"] = "Digit2";
+	export const Digit3 = "Digit3"; export const D3 = "Digit3"; Key["3"] = "Digit3";
+	export const Digit4 = "Digit4"; export const D4 = "Digit4"; Key["4"] = "Digit4";
+	export const Digit5 = "Digit5"; export const D5 = "Digit5"; Key["5"] = "Digit5";
+	export const Digit6 = "Digit6"; export const D6 = "Digit6"; Key["6"] = "Digit6";
+	export const Digit7 = "Digit7"; export const D7 = "Digit7"; Key["7"] = "Digit7";
+	export const Digit8 = "Digit8"; export const D8 = "Digit8"; Key["8"] = "Digit8";
+	export const Digit9 = "Digit9"; export const D9 = "Digit9"; Key["9"] = "Digit9";
+	export const Minus     = "Minus"; Key["-"] = "Minus";
+	export const Equal     = "Equal"; Key["="] = "Equal";
 	export const Backspace = "Backspace";
 
 	// (Semi-)central alpha region
 	export const Tab         = "Tab";
-	export const CapsLock    = "CapsLock";
+	export const CapsLock    = "CapsLock"; export const Caps = "CapsLock";
 	export const A = "KeyA"; export const B = "KeyB"; export const C = "KeyC"; export const D = "KeyD"; export const E = "KeyE";
 	export const F = "KeyF"; export const G = "KeyG"; export const H = "KeyH"; export const I = "KeyI"; export const J = "KeyJ";
 	export const K = "KeyK"; export const L = "KeyL"; export const M = "KeyM"; export const N = "KeyN"; export const O = "KeyO";
@@ -65,14 +65,14 @@ namespace mmk.keyboard.Key {
 	export const KeyP = "KeyP"; export const KeyQ = "KeyQ"; export const KeyR = "KeyR"; export const KeyS = "KeyS"; export const KeyT = "KeyT";
 	export const KeyU = "KeyU"; export const KeyV = "KeyV"; export const KeyW = "KeyW"; export const KeyX = "KeyX"; export const KeyY = "KeyY";
 	export const KeyZ = "KeyZ";
-	export const BracketLeft  = "BracketLeft";
-	export const BracketRight = "BracketRight";
-	export const Backslash    = "Backslash";
-	export const Semicolon    = "Semicolon";
-	export const Quote        = "Quote";
-	export const Comma        = "Comma";
-	export const Period       = "Period";
-	export const Slash        = "Slash";
+	export const BracketLeft  = "BracketLeft";   Key["["] = "BracketLeft";
+	export const BracketRight = "BracketRight";  Key["]"] = "BracketRight";
+	export const Backslash    = "Backslash";     Key["\\"] = "Backslash";
+	export const Semicolon    = "Semicolon";     Key[";"] = "Semicolon";
+	export const Quote        = "Quote";         Key["'"] = "Quote";
+	export const Comma        = "Comma";         Key[","] = "Comma";
+	export const Period       = "Period";        Key["."] = "Period";
+	export const Slash        = "Slash";         Key["/"] = "Slash";
 	export const Enter        = "Enter";
 
 	// Alpha edges and other control keys
@@ -88,12 +88,12 @@ namespace mmk.keyboard.Key {
 	export const Space        = "Space";
 
 	// 6-key Area
-	export const Insert     = "Insert";
-	export const Delete     = "Delete";
+	export const Insert     = "Insert"; export const Ins = "Insert";
+	export const Delete     = "Delete"; export const Del = "Delete";
 	export const Home       = "Home";
 	export const End        = "End";
-	export const PageUp     = "PageUp";
-	export const PageDown   = "PageDown";
+	export const PageUp     = "PageUp";   export const PgUp   = "PageUp";
+	export const PageDown   = "PageDown"; export const PgDown = "PageDown";
 
 	export const ArrowLeft  = "ArrowLeft";  export const Left  = "ArrowLeft";
 	export const ArrowRight = "ArrowRight"; export const Right = "ArrowRight";
@@ -109,16 +109,16 @@ namespace mmk.keyboard.Key {
 	export const NumpadEnter       = "NumpadEnter";
 
 	// Numpad w/ NumLock ON
-	export const Numpad0           = "Numpad0";
-	export const Numpad1           = "Numpad1";
-	export const Numpad2           = "Numpad2";
-	export const Numpad3           = "Numpad3";
-	export const Numpad4           = "Numpad4";
-	export const Numpad5           = "Numpad5";
-	export const Numpad6           = "Numpad6";
-	export const Numpad7           = "Numpad7";
-	export const Numpad8           = "Numpad8";
-	export const Numpad9           = "Numpad9";
+	export const Numpad0           = "Numpad0"; export const Num0 = "Numpad0";
+	export const Numpad1           = "Numpad1"; export const Num1 = "Numpad1";
+	export const Numpad2           = "Numpad2"; export const Num2 = "Numpad2";
+	export const Numpad3           = "Numpad3"; export const Num3 = "Numpad3";
+	export const Numpad4           = "Numpad4"; export const Num4 = "Numpad4";
+	export const Numpad5           = "Numpad5"; export const Num5 = "Numpad5";
+	export const Numpad6           = "Numpad6"; export const Num6 = "Numpad6";
+	export const Numpad7           = "Numpad7"; export const Num7 = "Numpad7";
+	export const Numpad8           = "Numpad8"; export const Num8 = "Numpad8";
+	export const Numpad9           = "Numpad9"; export const Num9 = "Numpad9";
 	export const NumpadDecimal     = "NumpadDecimal";
 
 	// Numpad w/ NumLock OFF (or with Shift held without 'fixing' that behavior)
@@ -145,4 +145,5 @@ namespace mmk.keyboard.Key {
 	export const NumpadUp          = "NumpadUp";
 	export const NumpadPageUp      = "NumpadPageUp";
 	export const NumpadDelete      = "NumpadDelete";
+
 } // namespace mmk.keyboard.Key

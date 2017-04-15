@@ -16,10 +16,15 @@
 namespace mmk.keyboard {
 	export namespace config {
 		export var debugEvents           = true;
-		export var debugIgnoreRepeat     = true;
+		export var debugIgnoreRepeat     = false;
+
 		export var debugLog              = true;
 		export var debugLogOnlyDown      = true;
-		export var debugLogOriginalEvent = true;
+		export var debugLogBaked         = true;
+		export var debugLogRaw           = true;
+		export var debugLogMods          = true;
+		export var debugLogOriginalEvent = false;
+
 		export var debugAssertKeyDefined = true;
 	} // namespace config
 
@@ -30,29 +35,54 @@ namespace mmk.keyboard {
 		if (!config.debugEvents) return;
 
 		if (config.debugLog && (!config.debugLogOnlyDown || ev.type === "keydown") && (!config.debugIgnoreRepeat || !ev.mmkRepeat)) {
-			console.log(
-				"semi-raw " +padR(ev.type+":", "         "),
-				"code",      padR(ev.code,     "                 "),
-				"->",        padR(ev.mmkCode,  "                 "),
-				"key",       padR(ev.key,      "        "),
+			let log = [];
+
+			log.push("semi-raw " +padR(ev.type+":", "         "));
+
+			if (config.debugLogBaked) log.push(
+				"| mmk",
+				ev.mmkRepeat ? "\u21BB" : " ",
+				"code",   padR(ev.mmkCode,  "            "),
+				"key",    padR(ev.mmkKey,   "            ")
+			);
+
+			if (config.debugLogRaw) log.push(
+				"| raw",
+				ev.repeat ? "\u21BB" : " ",
+				"code",      padR(ev.code, "            "),
+				"key",       padR(ev.key,  "            "),
 				"keyCode",   padL(ev.keyCode.toString(), "   "), "(0x"+padL(ev.keyCode.toString(16),"00")+")",
 				"which",     padL(ev.which.toString(),   "   "), "(0x"+padL(ev.which  .toString(16),"00")+")",
-				"timestamp", Date.now(),
-				"repeat",    ev.repeat,
-				"->",        ev.mmkRepeat,
-				"altKey",    ev.altKey,
-				"ctrlKey",   ev.ctrlKey,
-				"metaKey",   ev.metaKey,
-				"shiftKey",  ev.shiftKey,
-				config.debugLogOriginalEvent ? ev : "",
-				"");
+				"timestamp", Date.now()
+			);
+
+			if (config.debugLogMods) log.push(
+				"| mod",
+				ev.ctrlKey  ? "ctrl"  : "    ",
+				ev.altKey   ? "alt"   : "   ",
+				ev.shiftKey ? "shift" : "     ",
+				ev.metaKey  ? "meta"  : "    "
+			);
+
+			if (config.debugLogOriginalEvent) log.push("| ev", ev);
+
+			log.push("|");
+
+			(<any>console.log)(...log);
 		}
 
-		if (config.debugAssertKeyDefined && (ev.type !== "keypress" || ev.mmkCode !== "")) {
+		if (config.debugAssertKeyDefined) {
 			let KeyValues = Object.keys(Key);
-			let index = KeyValues.indexOf(ev.mmkCode);
-			console.assert(index !== -1,                    "Key."+ev.mmkCode+" === undefined");
-			console.assert(KeyValues[index] === ev.mmkCode, "Key."+ev.mmkCode+" === \""+KeyValues[index]+"\" !== \""+ev.mmkCode+"\"");
+			if (ev.mmkCode !== undefined) {
+				let index = KeyValues.indexOf(ev.mmkCode);
+				console.assert(index !== -1,                    "mmkCode: Key."+ev.mmkCode+" === undefined");
+				console.assert(KeyValues[index] === ev.mmkCode, "mmkCode: Key."+ev.mmkCode+" === \""+KeyValues[index]+"\" !== \""+ev.mmkCode+"\"");
+			}
+			if (ev.type !== "keypress" || ev.mmkKey !== undefined) {
+				let index = KeyValues.indexOf(ev.mmkCode);
+				console.assert(index !== -1,                   "mmkKey: Key."+ev.mmkKey+" === undefined");
+				console.assert(KeyValues[index] === ev.mmkKey, "mmkKey: Key."+ev.mmkKey+" === \""+KeyValues[index]+"\" !== \""+ev.mmkKey+"\"");
+			}
 		}
 	}
 

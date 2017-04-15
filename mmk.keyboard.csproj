@@ -30,13 +30,13 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\impl\addRawEventListener.ts" />
     <TypeScriptCompile Include="src\Key.ts" />
+    <TypeScriptCompile Include="src\SimpleKeyCombo.ts" />
     <TypeScriptCompile Include="src\rawEventListeners\debugDumpEvent.ts" />
-    <TypeScriptCompile Include="src\rawEventListeners\fixEventMmkCode.ts" />
     <TypeScriptCompile Include="src\rawEventListeners\fixEventMmkCode_FromCode.ts" />
-    <TypeScriptCompile Include="src\rawEventListeners\fixEventMmkCode_FromUpDownKeyCode.ts" />
+    <TypeScriptCompile Include="src\rawEventListeners\fixEventMmkKey_FromUpDownKeyCode.ts" />
     <TypeScriptCompile Include="src\rawEventListeners\fixEventMmkRepeat.ts" />
     <TypeScriptCompile Include="src\defs\KeyboardEvent.d.ts" />
-    <TypeScriptCompile Include="src\impl\reserved.ts" />
+    <TypeScriptCompile Include="src\systemConflictsWithSimpleKeyCombo.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\mmk.keyboard\mmk.keyboard.js.map" />

@@ -41,11 +41,14 @@ namespace mmk.keyboard {
 
 
 	interface ReservationEntry {
-		keys:   string;
-		origin: string; // e.g. "Media", "System", "Browser", "f.lux", etc.
+		// Add severity?
+		keys:          string;
+		origin:        string; // e.g. "Media", "System", "Browser", "f.lux", etc.
 		// Consider adding more detailed origin info - e.g. browser(s), os(es), shell(s), app(s), etc.
-		action: string;
+		action:        string;
 		// TODO: Add information about which combinations are overrideable or not
+
+		overrideable?: boolean;
 	}
 	const ReservedCombinations : ReservationEntry[] = [
 		// 6-key region
@@ -75,7 +78,7 @@ namespace mmk.keyboard {
 		{ keys: "Ctrl+Tab",          origin: "Browser", action: "Next tab"          },
 		{ keys: "Ctrl+Shift+Tab",    origin: "Browser", action: "Previous tab"      },
 		{ keys: "Alt+Tab",           origin: "System",  action: "Next window"       },
-		{ keys: "Alt+Shif+Tab",      origin: "System",  action: "Previous window"   },
+		{ keys: "Alt+Shift+Tab",     origin: "System",  action: "Previous window"   },
 
 		// F-keys row
 		{ keys: "Ctrl+Esc",          origin: "System",  action: "Start menu"        },
@@ -123,4 +126,41 @@ namespace mmk.keyboard {
 		{ keys: "Ctrl+Shift+B",      origin: "Browser", action: "Toggle bookmarks bar" }
 		// Not anywhere even remotely close to complete!
 	];
+	ReservedCombinations.forEach(rc=>{
+		if (rc.overrideable === undefined) {
+			if      (rc.origin === "System" ) rc.overrideable = false;
+			else if (rc.origin === "Media"  ) rc.overrideable = false;
+			else if (rc.origin === "f.lux"  ) rc.overrideable = false;
+			else if (rc.origin === "Browser") rc.overrideable = true;
+			else {
+				console.warn("No default overrideable setting for",rc.origin);
+				rc.overrideable = false; // Be pessemistic
+			}
+		}
+	});
+
+	export function systemConflictsWithSimpleKeyCombo(skc: SimpleKeyCombo): ReservationEntry[] {
+		return ReservedCombinations.filter(re => {
+			let reSkc = parseSimpleKeyCombo(re.keys);
+			let reKeyOrCode = reSkc.mmkKey || reSkc.mmkCode;
+			if (!reKeyOrCode) { console.warn("Cannot detect conflicts with",re.keys,"yet"); return false; }
+
+			if (skc.ctrl  !== undefined && reSkc.ctrl  !== undefined && skc.ctrl  !== reSkc.ctrl ) return false;
+			if (skc.alt   !== undefined && reSkc.alt   !== undefined && skc.alt   !== reSkc.alt  ) return false;
+			if (skc.shift !== undefined && reSkc.shift !== undefined && skc.shift !== reSkc.shift) return false;
+			if (skc.meta  !== undefined && reSkc.meta  !== undefined && skc.meta  !== reSkc.meta ) return false;
+
+			if (skc.mmkKey  === reKeyOrCode) return true;
+			if (skc.mmkCode === reKeyOrCode) return true;
+
+			return false;
+		});
+	}
+
+	addEventListener("load", function(){
+		console.assert(systemConflictsWithSimpleKeyCombo(parseSimpleKeyCombo(     "Left")).filter(r => !r.overrideable || r.action.indexOf("Scroll") === -1).length == 0);
+		console.assert(systemConflictsWithSimpleKeyCombo(parseSimpleKeyCombo("!Alt+Left")).filter(r => !r.overrideable || r.action.indexOf("Scroll") === -1).length == 0);
+		console.assert(systemConflictsWithSimpleKeyCombo(parseSimpleKeyCombo("?Alt+Left")).filter(r => !r.overrideable || r.action.indexOf("Scroll") === -1).length  > 0);
+		console.assert(systemConflictsWithSimpleKeyCombo(parseSimpleKeyCombo( "Alt+Left")).filter(r => !r.overrideable || r.action.indexOf("Scroll") === -1).length  > 0);
+	});
 } // namespace mmk.keyboard

@@ -22,7 +22,7 @@ namespace mmk.keyboard {
 	};
 
 	// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
-	const keyupdown_keyCode_to_mmkCode = {
+	const keyupdown_keyCode_to_mmkKey = {
 		0x03: "Cancel", // Ctrl+Pause = Break?
 		0x06: "Help",
 		0x08: "Backspace",
@@ -166,7 +166,7 @@ namespace mmk.keyboard {
 		0xde: "Quote",
 	};
 
-	const mac_keyCode_to_mmkCode = {
+	const mac_keyCode_to_mmkKey = {
 		0x0C: "NumLock", 0xBB: "NumpadEqual",
 		0x2C: "F13",     0x7C: "PrintScreen",
 		0x91: "F14",     0x7D: "ScrollLock",
@@ -174,7 +174,7 @@ namespace mmk.keyboard {
 	};
 
 	// This is just easier to fix up after the fact
-	const mmkCode_to_mmkCode = {
+	const mmkKey_to_mmkKey = {
 		"NumpadNumlock": "Numlock",
 		"NumpadDel":     "NumpadDelete",
 	};
@@ -195,24 +195,25 @@ namespace mmk.keyboard {
 	function ensurePostfix(v: string, postfix: string): string { return endsWith  (v, postfix) ? v : (v+postfix); }
 	function ensurePrefix (v: string, prefix:  string): string { return startsWith(v, prefix ) ? v : (prefix +v); }
 
-	export function fixEventMmkCode_FromUpDownKeyCode(event: KeyboardEvent) {
-		var tmpMmkCode;
+	export function fixEventMmkKey_FromUpDownKeyCode(event: KeyboardEvent) {
+		if (event.type === "keypress") return; // Above tables etc. are calibrated against keydown/up keycodes - yess, keypress keycodes are different!
+
+		var s : string;
 		var m : RegExpMatchArray;
 
 		// TODO: Consult keyboard layout mapping table
 
-		if      ((tmpMmkCode = keyCode_key_to_mmkCode[event.keyCode+" "+event.key])) event.mmkCode = tmpMmkCode;
-		else if ((tmpMmkCode = keyupdown_keyCode_to_mmkCode[event.keyCode]        )) event.mmkCode = tmpMmkCode;
-		else                                                                         event.mmkCode = "0x" + event.keyCode.toString(16).toUpperCase();
+		if ((s = keyupdown_keyCode_to_mmkKey[event.keyCode]        )) event.mmkKey = s;
+		else                                                          event.mmkKey = "0x" + event.keyCode.toString(16).toUpperCase();
 
 		if (event.location !== undefined) {
 			switch (event.location) {
-			case KeyboardEvent.DOM_KEY_LOCATION_LEFT:                                event.mmkCode = ensurePostfix(event.mmkCode, "Left");  break;
-			case KeyboardEvent.DOM_KEY_LOCATION_RIGHT:                               event.mmkCode = ensurePostfix(event.mmkCode, "Right"); break;
-			case KeyboardEvent.DOM_KEY_LOCATION_NUMPAD:                              event.mmkCode = ensurePrefix (event.key,    "Numpad"); break;
+			case KeyboardEvent.DOM_KEY_LOCATION_LEFT:                 event.mmkKey = ensurePostfix(event.mmkKey, "Left");  break;
+			case KeyboardEvent.DOM_KEY_LOCATION_RIGHT:                event.mmkKey = ensurePostfix(event.mmkKey, "Right"); break;
+			case KeyboardEvent.DOM_KEY_LOCATION_NUMPAD:               event.mmkKey = ensurePrefix (event.key,    "Numpad"); break;
 			}
 		}
 
-		if ((tmpMmkCode = mmkCode_to_mmkCode[event.mmkCode]))                        event.mmkCode = tmpMmkCode;
+		if ((s = mmkKey_to_mmkKey[event.mmkKey]))                     event.mmkKey = s;
 	}
 } // namespace mmk.keyboard

@@ -17,8 +17,12 @@ namespace mmk.keyboard {
 	export namespace config {
 		// IE11 reports keyboardEvent.repeat === false, even on repeat events.
 		// This workaround detects duplicate keydown events to determine if the key is really down or not instead.
+		// There is the possibility of a single unfixable false negative if the window was not focused when the key started repeating.
 		export var fixRepeat : boolean = true;
-		// TODO: Detect browsers this fix isn't required on
+
+		// Chrome will also report keyboardEvent.repeat === true, for e.g. the second event of LeftControl + RightControl.
+		// TODO:  Fix that system false positive?  Alternatively, add the 'false' positive bellow by ignoring .location ?
+
 	} // namespace config
 
 	let lastEvents : {[id: string]: KeyboardEvent} = {
@@ -47,7 +51,6 @@ namespace mmk.keyboard {
 		if (prevEvent.code     !== event.code    ) return;
 		if (prevEvent.which    !== event.which   ) return;
 
-		if (prevEvent.keyCode  !== event.keyCode ) return;
 		if (prevEvent.altKey   !== event.altKey  ) return;
 		if (prevEvent.ctrlKey  !== event.ctrlKey ) return;
 		if (prevEvent.shiftKey !== event.shiftKey) return;
