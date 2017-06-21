@@ -18,7 +18,7 @@ namespace mmk.keyboard {
 		export var verifySimpleComboCodes = true;
 	}
 
-	interface SimpleKeyModifiers {
+	export interface SimpleKeyModifiers {
 		// All modifier keys are tristate:
 		//     true:      e.g. Alt is required
 		//     false:     e.g. Alt is forbidden

@@ -40,7 +40,7 @@ namespace mmk.keyboard {
 
 
 
-	interface ReservationEntry {
+	export interface ReservationEntry {
 		// Add severity?
 		keys:          string;
 		origin:        string; // e.g. "Media", "System", "Browser", "f.lux", etc.
@@ -50,6 +50,7 @@ namespace mmk.keyboard {
 
 		overrideable?: boolean;
 	}
+	// https://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
 	const ReservedCombinations : ReservationEntry[] = [
 		// 6-key region
 		{ keys: "Ctrl+Alt+Ins",      origin: "Media",   action: "Play / Restart"    },
@@ -59,13 +60,19 @@ namespace mmk.keyboard {
 		{ keys: "Ctrl+Alt+PageUp",   origin: "Media",   action: "Prev track"        },
 		{ keys: "Ctrl+Alt+PageDown", origin: "Media",   action: "Next track"        },
 
+		{ keys: "Ctrl+Shift+Del",    origin: "Browser", action: "Clear browsing data"},
+
 		{ keys: "Alt+Home",          origin: "Browser", action: "Home page"         },
 		{ keys: "Alt+End",           origin: "f.lux",   action: "Toggle (1 hour)"   },
 		{ keys: "Alt+PageUp",        origin: "f.lux",   action: "Brighten"          },
 		{ keys: "Alt+PageDown",      origin: "f.lux",   action: "Dim"               },
 
+		{ keys: "Ctrl+Ins",          origin: "Browser", action: "Copy"              },
 		{ keys: "Ctrl+PageDown",     origin: "Browser", action: "Next tab"          },
 		{ keys: "Ctrl+PageUp",       origin: "Browser", action: "Previous tab"      },
+
+		{ keys: "Shift+Ins",         origin: "Browser", action: "Paste"             },
+		{ keys: "Shift+Del",         origin: "Browser", action: "Cut"               },
 
 		{ keys: "Home",              origin: "Browser", action: "Scroll to top"     },
 		{ keys: "End",               origin: "Browser", action: "Scroll to bottom"  },
@@ -81,6 +88,7 @@ namespace mmk.keyboard {
 		{ keys: "Alt+Shift+Tab",     origin: "System",  action: "Previous window"   },
 
 		// F-keys row
+		{ keys: "Shift+Esc",         origin: "Browser", action: "Task Manager"      },
 		{ keys: "Ctrl+Esc",          origin: "System",  action: "Start menu"        },
 		{ keys: "Ctrl+Shift+Esc",    origin: "System",  action: "Task manager"      },
 		{ keys: "Alt+Esc",           origin: "System",  action: "Focus next window" },
@@ -123,7 +131,42 @@ namespace mmk.keyboard {
 		{ keys: "Right",             origin: "Browser", action: "Scroll right"      },
 
 		// Alpha
-		{ keys: "Ctrl+Shift+B",      origin: "Browser", action: "Toggle bookmarks bar" }
+		{ keys: "Ctrl+Shift+B",      origin: "Browser", action: "Toggle bookmarks bar" },
+		{ keys: "Ctrl+Shift+D",      origin: "Browser", action: "Bookmark Open Pages"  },
+		{ keys: "Ctrl+Shift+I",      origin: "Browser", action: "Developer Tools"      },
+		{ keys: "Ctrl+Shift+N",      origin: "Browser", action: "New Incognito Window" },
+		{ keys: "Ctrl+Shift+O",      origin: "Browser", action: "Bookmarks Manager"    },
+		{ keys: "Ctrl+Shift+Q",      origin: "Browser", action: "Quit"                 },
+		{ keys: "Ctrl+Shift+R",      origin: "Browser", action: "Force Refresh"        }, // e.g. ignore cache
+		{ keys: "Ctrl+Shift+T",      origin: "Browser", action: "Recently Closed"      },
+		{ keys: "Ctrl+Shift+W",      origin: "Browser", action: "Close Window"         }, // All tabs
+
+		{ keys: "Alt+Shift+I",       origin: "Browser", action: "Report an Issue"      },
+
+		{ keys: "Ctrl+A",            origin: "Browser", action: "Select All"           },
+		{ keys: "Ctrl+C",            origin: "Browser", action: "Copy"                 },
+		{ keys: "Ctrl+D",            origin: "Browser", action: "Bookmark"             },
+		{ keys: "Ctrl+E",            origin: "Browser", action: "Search Engine"        },
+		{ keys: "Ctrl+F",            origin: "Browser", action: "Find"                 },
+		{ keys: "Ctrl+G",            origin: "Browser", action: "Find"                 },
+		{ keys: "Ctrl+H",            origin: "Browser", action: "History"              },
+		{ keys: "Ctrl+J",            origin: "Browser", action: "Downloads"            },
+		{ keys: "Ctrl+K",            origin: "Browser", action: "Search Engine"        },
+		{ keys: "Ctrl+N",            origin: "Browser", action: "New Window"           }, // Cannot be overridden in Chrome
+		{ keys: "Ctrl+O",            origin: "Browser", action: "Open"                 },
+		{ keys: "Ctrl+P",            origin: "Browser", action: "Print"                },
+		{ keys: "Ctrl+R",            origin: "Browser", action: "Refresh"              },
+		{ keys: "Ctrl+S",            origin: "Browser", action: "Save Page"            },
+		{ keys: "Ctrl+T",            origin: "Browser", action: "New Tab"              },
+		{ keys: "Ctrl+U",            origin: "Browser", action: "View Source"          },
+		{ keys: "Ctrl+V",            origin: "Browser", action: "Paste"                },
+		{ keys: "Ctrl+W",            origin: "Browser", action: "Close Tab"            },
+		{ keys: "Ctrl+X",            origin: "Browser", action: "Cut"                  },
+		{ keys: "Ctrl+Z",            origin: "Browser", action: "Undo"                 },
+
+		{ keys: "Alt+D",             origin: "Browser", action: "Select Address Bar"   },
+		{ keys: "Alt+E",             origin: "Browser", action: "File Menu"            }, // Chrome
+		{ keys: "Alt+F",             origin: "Browser", action: "File Menu"            },
 		// Not anywhere even remotely close to complete!
 	];
 	ReservedCombinations.forEach(rc=>{

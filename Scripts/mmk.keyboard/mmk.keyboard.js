@@ -1,21 +1,41 @@
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
     (function (keyboard) {
+        // Primary event order.
         addEventListener("load", function () {
+            // add mmkRepeat field
             addRawEventListener(this, "keyup", keyboard.fixEventMmkRepeat);
             addRawEventListener(this, "keydown", keyboard.fixEventMmkRepeat);
             addRawEventListener(this, "keypress", keyboard.fixEventMmkRepeat);
+            // add mmkCode field
             addRawEventListener(this, "keyup", keyboard.fixEventMmkCode_FromCode);
             addRawEventListener(this, "keydown", keyboard.fixEventMmkCode_FromCode);
             addRawEventListener(this, "keypress", keyboard.fixEventMmkCode_FromCode);
+            // add mmkKey field
             addRawEventListener(this, "keyup", keyboard.fixEventMmkKey_FromUpDownKeyCode);
             addRawEventListener(this, "keydown", keyboard.fixEventMmkKey_FromUpDownKeyCode);
             addRawEventListener(this, "keypress", keyboard.fixEventMmkKey_FromUpDownKeyCode);
+            // log to console based on mmk.keyboard.config settings
             addRawEventListener(this, "keyup", keyboard.debugDumpKeyboardEvent);
             addRawEventListener(this, "keydown", keyboard.debugDumpKeyboardEvent);
             addRawEventListener(this, "keypress", keyboard.debugDumpKeyboardEvent);
             addRawEventListener(this, "blur", keyboard.debugDumpFocusEvent);
+            // ...?
         });
         var hasEventListener = "addEventListener" in window;
         function addRawEventListener(target, type, listener) {
@@ -26,49 +46,68 @@ var mmk;
             else {
                 var ontype = "on" + type;
                 var t = target;
-                var oldCallback = t[ontype];
+                var oldCallback_1 = t[ontype];
+                // Don't add duplicate event listeners, or event listener objects.
                 var dedupeListId = "__" + ontype + "_dedupe";
                 var dedupeList = (t[dedupeListId] = t[dedupeListId] || []);
                 if (dedupeList.indexOf(listener) !== -1)
-                    return;
-                dedupeList.push(listener);
+                    return; // Duplicate
+                dedupeList.push(listener); // New/unique
                 if ("handleEvent" in listener) {
-                    if (oldCallback)
-                        t[ontype] = function (e) { oldCallback.call(this, e); listener.handleEvent(e); };
+                    if (oldCallback_1)
+                        t[ontype] = function (e) { oldCallback_1.call(this, e); listener.handleEvent(e); };
                     else
                         t[ontype] = function (e) { listener.handleEvent(e); };
                 }
                 else {
-                    if (oldCallback)
-                        t[ontype] = function (e) { oldCallback.call(this, e); listener.call(this, e); };
+                    if (oldCallback_1)
+                        t[ontype] = function (e) { oldCallback_1.call(this, e); listener.call(this, e); };
                     else
                         t[ontype] = function (e) { listener.call(this, e); };
                 }
             }
         }
+        // Debug junk
         addEventListener("load", function () {
             var target = document.getElementById("mmk-input-keyboard-debug-addRawEventListener-target");
             if (!target)
-                return;
+                return; // No debug
+            // Dedupe should kill both of these:
             var o = { handleEvent: function (e) { console.log("Event O", this); } };
             var ef = function (e) { console.log("Event F", this); };
             addRawEventListener(target, "click", function (e) { console.log("Event 1", this); });
             addRawEventListener(target, "click", function (e) { console.log("Event 2", this); });
             addRawEventListener(target, "click", ef);
             addRawEventListener(target, "click", o);
-            addRawEventListener(target, "click", function (e) { console.log("Event 1", this); });
-            addRawEventListener(target, "click", function (e) { console.log("Event 2", this); });
-            addRawEventListener(target, "click", ef);
-            addRawEventListener(target, "click", o);
+            addRawEventListener(target, "click", function (e) { console.log("Event 1", this); }); // Should NOT be deduped
+            addRawEventListener(target, "click", function (e) { console.log("Event 2", this); }); // Should NOT be deduped
+            addRawEventListener(target, "click", ef); // Should be deduped
+            addRawEventListener(target, "click", o); // Should be deduped
         });
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
     (function (keyboard) {
         var Key;
         (function (Key) {
+            // All legal mmkKey / mmkCode values.
+            // Function row
             Key.Escape = "Escape";
             Key.Esc = "Escape";
             Key.F1 = "F1";
@@ -86,6 +125,7 @@ var mmk;
             Key.Pause = "Pause";
             Key.PrintScreen = "PrintScreen";
             Key.ScrollLock = "ScrollLock";
+            // Digits Row
             Key.Backquote = "Backquote";
             Key["`"] = "Backquote";
             Key.Digit0 = "Digit0";
@@ -123,6 +163,7 @@ var mmk;
             Key.Equal = "Equal";
             Key["="] = "Equal";
             Key.Backspace = "Backspace";
+            // (Semi-)central alpha region
             Key.Tab = "Tab";
             Key.CapsLock = "CapsLock";
             Key.Caps = "CapsLock";
@@ -195,6 +236,7 @@ var mmk;
             Key.Slash = "Slash";
             Key["/"] = "Slash";
             Key.Enter = "Enter";
+            // Alpha edges and other control keys
             Key.ControlLeft = "ControlLeft";
             Key.CtrlLeft = "ControlLeft";
             Key.LCtrl = "ControlLeft";
@@ -225,6 +267,7 @@ var mmk;
             Key.OSRight = "MetaRight";
             Key.ContextMenu = "ContextMenu";
             Key.Space = "Space";
+            // 6-key Area
             Key.Insert = "Insert";
             Key.Ins = "Insert";
             Key.Delete = "Delete";
@@ -243,12 +286,14 @@ var mmk;
             Key.Up = "ArrowUp";
             Key.ArrowDown = "ArrowDown";
             Key.Down = "ArrowDown";
+            // Numpad Common
             Key.NumLock = "NumLock";
             Key.NumpadAdd = "NumpadAdd";
             Key.NumpadSubtract = "NumpadSubtract";
             Key.NumpadDivide = "NumpadDivide";
             Key.NumpadMultiply = "NumpadMultiply";
             Key.NumpadEnter = "NumpadEnter";
+            // Numpad w/ NumLock ON
             Key.Numpad0 = "Numpad0";
             Key.Num0 = "Numpad0";
             Key.Numpad1 = "Numpad1";
@@ -270,6 +315,7 @@ var mmk;
             Key.Numpad9 = "Numpad9";
             Key.Num9 = "Numpad9";
             Key.NumpadDecimal = "NumpadDecimal";
+            // Numpad w/ NumLock OFF (or with Shift held without 'fixing' that behavior)
             Key.NumpadFunc0 = "NumpadInsert";
             Key.NumpadFunc1 = "NumpadEnd";
             Key.NumpadFunc2 = "NumpadDown";
@@ -294,7 +340,153 @@ var mmk;
             Key.NumpadDelete = "NumpadDelete";
         })(Key = keyboard.Key || (keyboard.Key = {}));
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard.Key
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var keyboard;
+    (function (keyboard) {
+        var config;
+        (function (config) {
+            config.verifySimpleComboCodes = true;
+        })(config = keyboard.config || (keyboard.config = {}));
+        function parseSimpleKeyCombo(desc, modifierDefaults) {
+            var r = tryParseSimpleKeyCombo(desc, modifierDefaults);
+            console.assert(!!r, "parseSimpleKeyCombo failed to parse key combination:", desc);
+            return r;
+        }
+        keyboard.parseSimpleKeyCombo = parseSimpleKeyCombo;
+        function tryParseSimpleKeyCombo(desc, modifierDefaults) {
+            if (desc === undefined || desc === null || desc === "")
+                return undefined;
+            if (!modifierDefaults)
+                modifierDefaults = { alt: false, shift: false, ctrl: false, meta: false };
+            var skc = {
+                mmkCode: undefined,
+                mmkKey: undefined,
+                alt: modifierDefaults.alt,
+                shift: modifierDefaults.shift,
+                ctrl: modifierDefaults.ctrl,
+                meta: modifierDefaults.meta
+            };
+            var remaining = desc;
+            while (remaining.length > 0) {
+                var nextSplit = remaining.indexOf('+', 1);
+                var fragment = nextSplit === -1 ? remaining : remaining.substr(0, nextSplit); // Everything before "+"
+                remaining = nextSplit === -1 ? "" : remaining.substr(nextSplit + 1); // Everything after (skipping) "+"
+                if ((nextSplit !== -1) && (remaining.length === 0)) {
+                    console.warn("Malformed simple key combo ends with combining '+':", desc);
+                    return undefined;
+                }
+                console.assert(fragment.length > 0, "BUG: Should be impossible to reach with fragment.length === 0");
+                var firstChar = fragment[0];
+                var modVal = firstChar === '!' ? false : firstChar === '?' ? undefined : true;
+                switch (fragment.replace(/^[!?]/, "").toLowerCase()) {
+                    case "control":
+                    case "ctrl":
+                    case "ctl":
+                        skc.ctrl = modVal;
+                        break;
+                    case "shift":
+                    case "shft":
+                        skc.shift = modVal;
+                        break;
+                    case "alt":
+                        skc.alt = modVal;
+                        break;
+                    case "meta":
+                    case "win":
+                    case "os":
+                        skc.meta = modVal;
+                        break;
+                    default:
+                        if (remaining.length > 0) {
+                            console.warn("Unrecognized modifier key, or unexpected non-modifier mid-combination in:", desc);
+                            return undefined;
+                        }
+                        var scanMatch = /^\[(.+)\]$/.exec(fragment);
+                        if (scanMatch)
+                            fragment = scanMatch[1];
+                        var keys = Object.keys(keyboard.Key);
+                        var i = keys.indexOf(fragment);
+                        if (i === -1) {
+                            console.warn("Unrecognized key:", fragment);
+                            return undefined;
+                        }
+                        var key = keyboard.Key[fragment]; // Normalize
+                        if (scanMatch)
+                            skc.mmkCode = key;
+                        else
+                            skc.mmkKey = key;
+                        break;
+                }
+            }
+            return skc;
+        }
+        keyboard.tryParseSimpleKeyCombo = tryParseSimpleKeyCombo;
+        function isSimpleKeyCombo(event, skc) {
+            if (skc.mmkCode !== undefined && event.mmkCode !== skc.mmkCode)
+                return false;
+            if (skc.mmkKey !== undefined && event.mmkKey !== skc.mmkKey)
+                return false;
+            if (skc.ctrl !== undefined && event.ctrlKey !== skc.ctrl)
+                return false;
+            if (skc.shift !== undefined && event.shiftKey !== skc.shift)
+                return false;
+            if (skc.alt !== undefined && event.altKey !== skc.alt)
+                return false;
+            if (skc.meta !== undefined && event.metaKey !== skc.meta)
+                return false;
+            return true;
+        }
+        keyboard.isSimpleKeyCombo = isSimpleKeyCombo;
+        function equalSimpleKeyCombo(l, r) {
+            return (l.mmkCode === r.mmkCode) &&
+                (l.mmkKey === r.mmkKey) &&
+                (l.ctrl === r.ctrl) &&
+                (l.shift === r.shift) &&
+                (l.alt === r.alt) &&
+                (l.meta === r.meta);
+        }
+        // ~ Unit testing
+        function testEqual(L, R) { var Lskc = parseSimpleKeyCombo(L); var Rskc = parseSimpleKeyCombo(R); var eq = equalSimpleKeyCombo(Lskc, Rskc); console.assert(eq, "Expected:", L, "(", Lskc, ") ===", R, "(", Rskc, ")"); }
+        function testNotEqual(L, R) { var Lskc = parseSimpleKeyCombo(L); var Rskc = parseSimpleKeyCombo(R); var eq = equalSimpleKeyCombo(Lskc, Rskc); console.assert(!eq, "Expected:", L, "(", Lskc, ") !==", R, "(", Rskc, ")"); }
+        testEqual("Ctrl+Alt+Del", "Control+Alt+Delete");
+        testNotEqual("Ctrl+Alt+Del", "Control+Alt+Ins");
+        testEqual("!Ctrl+!Alt+!Shift+Delete", "Delete");
+        testNotEqual("Delete", "Ctrl+Delete");
+        testNotEqual("Delete", "Alt+Delete");
+        testNotEqual("Delete", "Shift+Delete");
+        testNotEqual("Delete", "Meta+Delete");
+    })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
@@ -310,7 +502,7 @@ var mmk;
             config.debugLogMods = true;
             config.debugLogOriginalEvent = false;
             config.debugAssertKeyDefined = true;
-        })(config = keyboard.config || (keyboard.config = {}));
+        })(config = keyboard.config || (keyboard.config = {})); // namespace config
         function padR(v, pad) { v = v !== undefined ? v : ""; return v + pad.substr(Math.min(v.length, pad.length)); }
         function padL(v, pad) { v = v !== undefined ? v : ""; return pad.substr(Math.min(v.length, pad.length)) + v; }
         function debugDumpKeyboardEvent(ev) {
@@ -350,11 +542,26 @@ var mmk;
         }
         keyboard.debugDumpFocusEvent = debugDumpFocusEvent;
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
     (function (keyboard) {
+        // The numpad is particularly finicky
         var code_key_to_mmkCode = {
             "Numpad1 End": "NumpadEnd",
             "Numpad2 ArrowDown": "NumpadDown",
@@ -368,11 +575,13 @@ var mmk;
             "Numpad0 Insert": "NumpadInsert",
             "NumpadDecimal Delete": "NumpadDelete",
         };
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
         var code_to_mmkCode = {
             "Left": "ArrowLeft",
             "Right": "ArrowRight",
             "Up": "ArrowUp",
             "Down": "ArrowDown",
+            // Pure paranoia
             "0": "Digit0",
             "1": "Digit1",
             "2": "Digit2",
@@ -383,9 +592,11 @@ var mmk;
             "7": "Digit7",
             "8": "Digit8",
             "9": "Digit9",
+            // < FF 49, < Chrome 50
             "VolumeMute": "AudioVolumeMute",
             "VolumeDown": "AudioVolumeDown",
             "VolumeUp": "AudioVolumeUp",
+            // < FF 48, Current Chrome?
             "OSLeft": "MetaLeft",
             "OSRight": "MetaRight",
         };
@@ -395,28 +606,46 @@ var mmk;
             var tmpMmkCode;
             var m;
             if ((event.code === "") || (event.code === "Unidentified"))
-                event.mmkCode = "0x" + event.keyCode.toString(16).toUpperCase();
+                event.mmkCode = "0x" + event.keyCode.toString(16).toUpperCase(); // TODO: Add hex value?
             else if ((tmpMmkCode = code_key_to_mmkCode[event.code + " " + event.key]))
                 event.mmkCode = tmpMmkCode;
             else if ((tmpMmkCode = code_to_mmkCode[event.code]))
                 event.mmkCode = tmpMmkCode;
             else
-                event.mmkCode = event.code;
+                event.mmkCode = event.code; // Assume the original code was OK.  Sketchy - run with config.debugAssertKeyDefined during development to detect problems.
         }
         keyboard.fixEventMmkCode_FromCode = fixEventMmkCode_FromCode;
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
     (function (keyboard) {
         var keyCode_key_to_mmkCode = {};
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
         var keyupdown_keyCode_to_mmkKey = {
             0x03: "Cancel",
             0x06: "Help",
             0x08: "Backspace",
             0x09: "Tab",
+            // 0x0C: // NumpadEqual (Win) or Numlock (Mac) or NumpadClear (Numpad5 without numlock)
             0x0D: "Enter",
+            // 0x0E: "Enter", // Weird reserved but unused gecko constant?
+            // XXX: We can't differentiate between Left/Right with only keyCode
             0x10: "Shift",
             0x11: "Control",
             0x12: "Alt",
@@ -447,11 +676,13 @@ var mmk;
             0x37: "Digit7",
             0x38: "Digit8",
             0x39: "Digit9",
+            // 0x3A: Colon or Comma, rare?
             0x3b: "Semicolon",
             0x3c: "LessThan",
             0x3d: "NumpadEqual",
             0x3e: "GreaterThan",
             0x3f: "QuestionMark",
+            // 0x40: "At", // @ or LeftBracket, depending (tm)?
             0x41: "KeyA",
             0x42: "KeyB",
             0x43: "KeyC",
@@ -469,6 +700,7 @@ var mmk;
             0x4f: "KeyO",
             0x50: "KeyP",
             0x51: "KeyQ",
+            // 0xBA: "KeyQ", // Greek on Mac/Linux?  Al
             0x52: "KeyR",
             0x53: "KeyS",
             0x54: "KeyT",
@@ -509,6 +741,19 @@ var mmk;
             0x79: "F10",
             0x7a: "F11",
             0x7b: "F12",
+            // Very platform specific
+            // 0x7c: "F13",
+            // 0x7d: "F14",
+            // 0x7e: "F15",
+            // 0x7f: "F16",
+            // 0x80: "F17",
+            // 0x81: "F18",
+            // 0x82: "F19",
+            // 0x83: "F20",
+            // 0x84: "F21",
+            // 0x85: "F22",
+            // 0x86: "F23",
+            // 0x87: "F24",
             0x90: "NumLock",
             0x91: "ScrollLock",
             0xba: "Semicolon",
@@ -531,6 +776,7 @@ var mmk;
             0x91: "F14", 0x7D: "ScrollLock",
             0x13: "F15", 0x7E: "Pause",
         };
+        // This is just easier to fix up after the fact
         var mmkKey_to_mmkKey = {
             "NumpadNumlock": "Numlock",
             "NumpadDel": "NumpadDelete",
@@ -556,9 +802,10 @@ var mmk;
         function ensurePrefix(v, prefix) { return startsWith(v, prefix) ? v : (prefix + v); }
         function fixEventMmkKey_FromUpDownKeyCode(event) {
             if (event.type === "keypress")
-                return;
+                return; // Above tables etc. are calibrated against keydown/up keycodes - yess, keypress keycodes are different!
             var s;
             var m;
+            // TODO: Consult keyboard layout mapping table
             if ((s = keyupdown_keyCode_to_mmkKey[event.keyCode]))
                 event.mmkKey = s;
             else
@@ -581,16 +828,34 @@ var mmk;
         }
         keyboard.fixEventMmkKey_FromUpDownKeyCode = fixEventMmkKey_FromUpDownKeyCode;
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
     (function (keyboard) {
         var config;
         (function (config) {
+            // IE11 reports keyboardEvent.repeat === false, even on repeat events.
+            // This workaround detects duplicate keydown events to determine if the key is really down or not instead.
+            // There is the possibility of a single unfixable false negative if the window was not focused when the key started repeating.
             config.fixRepeat = true;
-        })(config = keyboard.config || (keyboard.config = {}));
+        })(config = keyboard.config || (keyboard.config = {})); // namespace config
         var lastEvents = {
+            // NOTE WELL: fixEventRepeat cares about the difference between null / undefined!  I'm sorry.
             "keydown": null,
             "keypress": null
         };
@@ -599,19 +864,21 @@ var mmk;
             if (!config.fixRepeat)
                 return;
             if (event.repeat)
-                config.fixRepeat = false;
+                config.fixRepeat = false; // Oh, the system already takes care of it.  Neat!
+            // Track previous event
             if (event.type == "keyup") {
                 Object.keys(lastEvents).forEach(function (key) { return lastEvents[key] = null; });
             }
             var prevEvent = lastEvents[event.type];
             if (prevEvent === undefined)
-                return;
+                return; // not an event type we need to fix up
             if (prevEvent === null) {
                 lastEvents[event.type] = event;
                 return;
-            }
+            } // no previous event, no need to fix up
             console.assert(prevEvent.type == event.type);
             lastEvents[event.type] = event;
+            // Okay, is this a duplicate event?
             if (prevEvent.keyCode !== event.keyCode)
                 return;
             if (prevEvent.charCode !== event.charCode)
@@ -630,155 +897,62 @@ var mmk;
                 return;
             if (prevEvent.location !== event.location)
                 return;
+            // Identical-enough events for me.
             event.mmkRepeat = true;
         }
         keyboard.fixEventMmkRepeat = fixEventMmkRepeat;
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 var mmk;
 (function (mmk) {
     var keyboard;
     (function (keyboard) {
-        var config;
-        (function (config) {
-            config.verifySimpleComboCodes = true;
-        })(config = keyboard.config || (keyboard.config = {}));
-        function parseSimpleKeyCombo(desc, modifierDefaults) {
-            var r = tryParseSimpleKeyCombo(desc, modifierDefaults);
-            console.assert(!!r, "parseSimpleKeyCombo failed to parse key combination:", desc);
-            return r;
-        }
-        keyboard.parseSimpleKeyCombo = parseSimpleKeyCombo;
-        function tryParseSimpleKeyCombo(desc, modifierDefaults) {
-            if (desc === undefined || desc === null || desc === "")
-                return undefined;
-            if (!modifierDefaults)
-                modifierDefaults = { alt: false, shift: false, ctrl: false, meta: false };
-            var skc = {
-                mmkCode: undefined,
-                mmkKey: undefined,
-                alt: modifierDefaults.alt,
-                shift: modifierDefaults.shift,
-                ctrl: modifierDefaults.ctrl,
-                meta: modifierDefaults.meta
-            };
-            var remaining = desc;
-            while (remaining.length > 0) {
-                var nextSplit = remaining.indexOf('+', 1);
-                var fragment = nextSplit === -1 ? remaining : remaining.substr(0, nextSplit);
-                remaining = nextSplit === -1 ? "" : remaining.substr(nextSplit + 1);
-                if ((nextSplit !== -1) && (remaining.length === 0)) {
-                    console.warn("Malformed simple key combo ends with combining '+':", desc);
-                    return undefined;
-                }
-                console.assert(fragment.length > 0, "BUG: Should be impossible to reach with fragment.length === 0");
-                var firstChar = fragment[0];
-                var modVal = firstChar === '!' ? false : firstChar === '?' ? undefined : true;
-                switch (fragment.replace(/^[!?]/, "").toLowerCase()) {
-                    case "control":
-                    case "ctrl":
-                    case "ctl":
-                        skc.ctrl = modVal;
-                        break;
-                    case "shift":
-                    case "shft":
-                        skc.shift = modVal;
-                        break;
-                    case "alt":
-                        skc.alt = modVal;
-                        break;
-                    case "meta":
-                    case "win":
-                    case "os":
-                        skc.meta = modVal;
-                        break;
-                    default:
-                        if (remaining.length > 0) {
-                            console.warn("Unrecognized modifier key, or unexpected non-modifier mid-combination in:", desc);
-                            return undefined;
-                        }
-                        var scanMatch = /^\[(.+)\]$/.exec(fragment);
-                        if (scanMatch)
-                            fragment = scanMatch[1];
-                        var keys = Object.keys(keyboard.Key);
-                        var i = keys.indexOf(fragment);
-                        if (i === -1) {
-                            console.warn("Unrecognized key:", fragment);
-                            return undefined;
-                        }
-                        var key = keyboard.Key[fragment];
-                        if (scanMatch)
-                            skc.mmkCode = key;
-                        else
-                            skc.mmkKey = key;
-                        break;
-                }
-            }
-            return skc;
-        }
-        keyboard.tryParseSimpleKeyCombo = tryParseSimpleKeyCombo;
-        function isSimpleKeyCombo(event, skc) {
-            if (skc.mmkCode !== undefined && event.mmkCode !== skc.mmkCode)
-                return false;
-            if (skc.mmkKey !== undefined && event.mmkKey !== skc.mmkKey)
-                return false;
-            if (skc.ctrl !== undefined && event.ctrlKey !== skc.ctrl)
-                return false;
-            if (skc.shift !== undefined && event.shiftKey !== skc.shift)
-                return false;
-            if (skc.alt !== undefined && event.altKey !== skc.alt)
-                return false;
-            if (skc.meta !== undefined && event.metaKey !== skc.meta)
-                return false;
-            return true;
-        }
-        keyboard.isSimpleKeyCombo = isSimpleKeyCombo;
-        function equalSimpleKeyCombo(l, r) {
-            return (l.mmkCode === r.mmkCode) &&
-                (l.mmkKey === r.mmkKey) &&
-                (l.ctrl === r.ctrl) &&
-                (l.shift === r.shift) &&
-                (l.alt === r.alt) &&
-                (l.meta === r.meta);
-        }
-        function testEqual(L, R) { var Lskc = parseSimpleKeyCombo(L); var Rskc = parseSimpleKeyCombo(R); var eq = equalSimpleKeyCombo(Lskc, Rskc); console.assert(eq, "Expected:", L, "(", Lskc, ") ===", R, "(", Rskc, ")"); }
-        function testNotEqual(L, R) { var Lskc = parseSimpleKeyCombo(L); var Rskc = parseSimpleKeyCombo(R); var eq = equalSimpleKeyCombo(Lskc, Rskc); console.assert(!eq, "Expected:", L, "(", Lskc, ") !==", R, "(", Rskc, ")"); }
-        testEqual("Ctrl+Alt+Del", "Control+Alt+Delete");
-        testNotEqual("Ctrl+Alt+Del", "Control+Alt+Ins");
-        testEqual("!Ctrl+!Alt+!Shift+Delete", "Delete");
-        testNotEqual("Delete", "Ctrl+Delete");
-        testNotEqual("Delete", "Alt+Delete");
-        testNotEqual("Delete", "Shift+Delete");
-        testNotEqual("Delete", "Meta+Delete");
-    })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
-var mmk;
-(function (mmk) {
-    var keyboard;
-    (function (keyboard) {
+        // https://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
         var ReservedCombinations = [
+            // 6-key region
             { keys: "Ctrl+Alt+Ins", origin: "Media", action: "Play / Restart" },
             { keys: "Ctrl+Alt+Del", origin: "System", action: "Close program, secure attention, login, etc." },
             { keys: "Ctrl+Alt+Home", origin: "Media", action: "Pause" },
             { keys: "Ctrl+Alt+End", origin: "Media", action: "Stop" },
             { keys: "Ctrl+Alt+PageUp", origin: "Media", action: "Prev track" },
             { keys: "Ctrl+Alt+PageDown", origin: "Media", action: "Next track" },
+            { keys: "Ctrl+Shift+Del", origin: "Browser", action: "Clear browsing data" },
             { keys: "Alt+Home", origin: "Browser", action: "Home page" },
             { keys: "Alt+End", origin: "f.lux", action: "Toggle (1 hour)" },
             { keys: "Alt+PageUp", origin: "f.lux", action: "Brighten" },
             { keys: "Alt+PageDown", origin: "f.lux", action: "Dim" },
+            { keys: "Ctrl+Ins", origin: "Browser", action: "Copy" },
             { keys: "Ctrl+PageDown", origin: "Browser", action: "Next tab" },
             { keys: "Ctrl+PageUp", origin: "Browser", action: "Previous tab" },
+            { keys: "Shift+Ins", origin: "Browser", action: "Paste" },
+            { keys: "Shift+Del", origin: "Browser", action: "Cut" },
             { keys: "Home", origin: "Browser", action: "Scroll to top" },
             { keys: "End", origin: "Browser", action: "Scroll to bottom" },
             { keys: "PageUp", origin: "Browser", action: "Scroll up a page" },
             { keys: "PageDown", origin: "Browser", action: "Scroll down a page" },
+            // Tab
             { keys: "Tab", origin: "Browser", action: "Focus next" },
             { keys: "Shift+Tab", origin: "Browser", action: "Focus previous" },
             { keys: "Ctrl+Tab", origin: "Browser", action: "Next tab" },
             { keys: "Ctrl+Shift+Tab", origin: "Browser", action: "Previous tab" },
             { keys: "Alt+Tab", origin: "System", action: "Next window" },
             { keys: "Alt+Shift+Tab", origin: "System", action: "Previous window" },
+            // F-keys row
+            { keys: "Shift+Esc", origin: "Browser", action: "Task Manager" },
             { keys: "Ctrl+Esc", origin: "System", action: "Start menu" },
             { keys: "Ctrl+Shift+Esc", origin: "System", action: "Task manager" },
             { keys: "Alt+Esc", origin: "System", action: "Focus next window" },
@@ -789,6 +963,7 @@ var mmk;
             { keys: "F5", origin: "Browser", action: "Refresh Page" },
             { keys: "F11", origin: "Browser", action: "Full Screen" },
             { keys: "F12", origin: "Browser", action: "Developer Tools" },
+            // Top row
             { keys: "Ctrl+1", origin: "Browser", action: "Select tab 1" },
             { keys: "Ctrl+2", origin: "Browser", action: "Select tab 2" },
             { keys: "Ctrl+3", origin: "Browser", action: "Select tab 3" },
@@ -802,6 +977,7 @@ var mmk;
             { keys: "Ctrl+-", origin: "Browser", action: "Zoom out" },
             { keys: "Ctrl+=", origin: "Browser", action: "Zoom in" },
             { keys: "Backspace", origin: "Browser", action: "Previous History" },
+            // Arrow keys
             { keys: "Ctrl+Alt+Up", origin: "Media", action: "Player volume up" },
             { keys: "Ctrl+Alt+Down", origin: "Media", action: "Player volume down" },
             { keys: "Ctrl+Alt+Left", origin: "Media", action: "Seek backward" },
@@ -812,7 +988,40 @@ var mmk;
             { keys: "Down", origin: "Browser", action: "Scroll down" },
             { keys: "Left", origin: "Browser", action: "Scroll left" },
             { keys: "Right", origin: "Browser", action: "Scroll right" },
-            { keys: "Ctrl+Shift+B", origin: "Browser", action: "Toggle bookmarks bar" }
+            // Alpha
+            { keys: "Ctrl+Shift+B", origin: "Browser", action: "Toggle bookmarks bar" },
+            { keys: "Ctrl+Shift+D", origin: "Browser", action: "Bookmark Open Pages" },
+            { keys: "Ctrl+Shift+I", origin: "Browser", action: "Developer Tools" },
+            { keys: "Ctrl+Shift+N", origin: "Browser", action: "New Incognito Window" },
+            { keys: "Ctrl+Shift+O", origin: "Browser", action: "Bookmarks Manager" },
+            { keys: "Ctrl+Shift+Q", origin: "Browser", action: "Quit" },
+            { keys: "Ctrl+Shift+R", origin: "Browser", action: "Force Refresh" },
+            { keys: "Ctrl+Shift+T", origin: "Browser", action: "Recently Closed" },
+            { keys: "Ctrl+Shift+W", origin: "Browser", action: "Close Window" },
+            { keys: "Alt+Shift+I", origin: "Browser", action: "Report an Issue" },
+            { keys: "Ctrl+A", origin: "Browser", action: "Select All" },
+            { keys: "Ctrl+C", origin: "Browser", action: "Copy" },
+            { keys: "Ctrl+D", origin: "Browser", action: "Bookmark" },
+            { keys: "Ctrl+E", origin: "Browser", action: "Search Engine" },
+            { keys: "Ctrl+F", origin: "Browser", action: "Find" },
+            { keys: "Ctrl+G", origin: "Browser", action: "Find" },
+            { keys: "Ctrl+H", origin: "Browser", action: "History" },
+            { keys: "Ctrl+J", origin: "Browser", action: "Downloads" },
+            { keys: "Ctrl+K", origin: "Browser", action: "Search Engine" },
+            { keys: "Ctrl+N", origin: "Browser", action: "New Window" },
+            { keys: "Ctrl+O", origin: "Browser", action: "Open" },
+            { keys: "Ctrl+P", origin: "Browser", action: "Print" },
+            { keys: "Ctrl+R", origin: "Browser", action: "Refresh" },
+            { keys: "Ctrl+S", origin: "Browser", action: "Save Page" },
+            { keys: "Ctrl+T", origin: "Browser", action: "New Tab" },
+            { keys: "Ctrl+U", origin: "Browser", action: "View Source" },
+            { keys: "Ctrl+V", origin: "Browser", action: "Paste" },
+            { keys: "Ctrl+W", origin: "Browser", action: "Close Tab" },
+            { keys: "Ctrl+X", origin: "Browser", action: "Cut" },
+            { keys: "Ctrl+Z", origin: "Browser", action: "Undo" },
+            { keys: "Alt+D", origin: "Browser", action: "Select Address Bar" },
+            { keys: "Alt+E", origin: "Browser", action: "File Menu" },
+            { keys: "Alt+F", origin: "Browser", action: "File Menu" },
         ];
         ReservedCombinations.forEach(function (rc) {
             if (rc.overrideable === undefined) {
@@ -826,7 +1035,7 @@ var mmk;
                     rc.overrideable = true;
                 else {
                     console.warn("No default overrideable setting for", rc.origin);
-                    rc.overrideable = false;
+                    rc.overrideable = false; // Be pessemistic
                 }
             }
         });
@@ -861,5 +1070,5 @@ var mmk;
             console.assert(systemConflictsWithSimpleKeyCombo(keyboard.parseSimpleKeyCombo("Alt+Left")).filter(function (r) { return !r.overrideable || r.action.indexOf("Scroll") === -1; }).length > 0);
         });
     })(keyboard = mmk.keyboard || (mmk.keyboard = {}));
-})(mmk || (mmk = {}));
+})(mmk || (mmk = {})); // namespace mmk.keyboard
 //# sourceMappingURL=mmk.keyboard.js.map
