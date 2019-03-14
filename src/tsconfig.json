@@ -1,0 +1,9 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "alwaysStrict": true,
+        "outFile": "..\\Scripts\\mmk.keyboard\\mmk.keyboard.js",
+        "declaration": true,
+        "sourceMap": true,
+    },
+}

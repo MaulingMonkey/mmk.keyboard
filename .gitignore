@@ -4,7 +4,7 @@ Thumbs.db
 *.opendb
 *.user
 
-packages/
+.projnfo/
 .vs/
-bin/
-obj/
+node_modules/
+packages/

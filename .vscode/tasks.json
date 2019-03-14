@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+    },
+    "tasks": [
+        {
+            "label": "Build documentation",
+            "type": "shell",
+            "command": "${workspaceFolder}\\build\\docs.cmd",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Build library",
+            "type": "shell",
+            "command": "${workspaceFolder}\\build\\library.cmd",
+            "problemMatcher": [ "$tsc" ],
+            "group": "build"
+        },
+        {
+            "label": "Build all",
+            "type": "shell",
+            "command": "${workspaceFolder}\\build\\all.cmd",
+            "problemMatcher": [ "$tsc" ],
+            "group": { "kind": "build", "isDefault": true }
+        },
+        {
+            "label": "Open demo",
+            "type": "shell",
+            "command": "start \"\" \"${workspaceFolder}\\demo\\index.html\"",
+            "problemMatcher": []
+        },
+        {
+            "label": "Open documentation",
+            "type": "shell",
+            "command": "start \"\" \"${workspaceFolder}\\docs\\index.html\"",
+            "problemMatcher": []
+        }
+    ]
+}

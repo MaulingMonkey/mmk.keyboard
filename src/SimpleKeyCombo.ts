@@ -14,36 +14,78 @@
 */
 
 namespace mmk.keyboard {
-	export namespace config {
-		export var verifySimpleComboCodes = true;
-	}
-
+	/**
+	 * Represents a set of keyboard modifier key states.  All values are tristate - e.g.:
+	 * ```ts
+	 * modifiers.alt === true      // Means Alt is required
+	 * modifiers.alt === false     // Means Alt is forbidden
+	 * modifiers.alt === undefined // Means Alt is ignored and may be held or not
+	 * ```
+	 */
 	export interface SimpleKeyModifiers {
-		// All modifier keys are tristate:
-		//     true:      e.g. Alt is required
-		//     false:     e.g. Alt is forbidden
-		//     undefined: e.g. Alt is ignored
+		/** The `Alt` key, or `Option` key on Mac style keyboards. */
 		alt?:    boolean;
+
+		/** The `Shift` key. */
 		shift?:  boolean;
+
+		/** The `Control` key. */
 		ctrl?:   boolean;
+
+		/** The `Windows` key, or `Command` key on Mac style keyboards. */
 		meta?:   boolean;
 	}
 
-	// Describes a simple key combination that requires no external state tracking (other held keys, keys within N milliseconds, etc.) to fire.
+	/**
+	 * Describes a simple key combination that requires no external state tracking (other held keys, keys within N
+	 * milliseconds, etc.) to fire.  For example, `Alt+F4` would possibly be represented by:
+	 * 
+	 * ```js
+	 * { mmkKey: "F4", alt: true }
+	 * ```
+	 * 
+	 * Or if you wanted *only* `Alt+F4` and to exclude `Alt+Ctrl+F4` and other modifier combinations:
+	 * 
+	 * ```js
+	 * { mmkKey: "F4", alt: true, shift: false, ctrl: false, meta: false }
+	 * ```
+	 */
 	export interface SimpleKeyCombo extends SimpleKeyModifiers {
+		/** What [[KeyboardEvent.mmkCode]] is required for this simple key combination to match. */
 		mmkCode?: string;
+
+		/** What [[KeyboardEvent.mmkKey]] is required for this simple key combination to match. */
 		mmkKey?:  string;
 	}
 
-	export function parseSimpleKeyCombo(desc: string, modifierDefaults?: SimpleKeyModifiers): SimpleKeyCombo {
+	/**
+	 * Parse a human-readable string like `"Ctrl+Shift+B"` and turn it into a [[SimpleKeyCombo]], asserting if it fails.
+	 * Use [[tryParseSimpleKeyCombo]] instead if you're parsing user input, which will return `undefined` if it fails.
+	 * The behavior of any unspecified keys on matching the combination is controlled by `modifierDefaults`.
+	 * `modifierDefaults` defaults to all false, which means e.g. `"Ctrl+Shift+B"` won't match `Ctrl+Alt+Shift+B`.
+	 * 
+	 * Additionally, you can use `?` to ignore a modifier (e.g. `"?Ctrl+Shift+B"` will ignore if `Ctrl` is held or not),
+	 * or use `!` to specify a modifier *cannot* be held (e.g. `"!Ctrl+Shift+B"` demands `Ctrl` is not held, ignoring
+	 * `modifierDefaults.ctrl`)
+	 */
+	export function parseSimpleKeyCombo(desc: string, modifierDefaults: SimpleKeyModifiers = { alt: false, shift: false, ctrl: false, meta: false }): SimpleKeyCombo {
 		let r = tryParseSimpleKeyCombo(desc, modifierDefaults);
 		console.assert(!!r, "parseSimpleKeyCombo failed to parse key combination:", desc);
 		return r;
 	}
 
-	export function tryParseSimpleKeyCombo(desc: string, modifierDefaults?: SimpleKeyModifiers): SimpleKeyCombo {
-		if (desc === undefined || desc === null || desc === "") return undefined;
-		if (!modifierDefaults) modifierDefaults = { alt: false, shift: false, ctrl: false, meta: false };
+	/**
+	 * Parse a human-readable string like `"Ctrl+Shift+B"` and turn it into a [[SimpleKeyCombo]], or returns `undefined`.
+	 * Use [[parseSimpleKeyCombo]] instead if you're parsing hardcoded strings, which will assert if it fails.
+	 * The behavior of any unspecified keys on matching the combination is controlled by `modifierDefaults`.
+	 * `modifierDefaults` defaults to all false, which means e.g. `"Ctrl+Shift+B"` won't match `Ctrl+Alt+Shift+B`.
+	 * 
+	 * Additionally, you can use `?` to ignore a modifier (e.g. `"?Ctrl+Shift+B"` will ignore if `Ctrl` is held or not),
+	 * or use `!` to specify a modifier *cannot* be held (e.g. `"!Ctrl+Shift+B"` demands `Ctrl` is not held, ignoring
+	 * `modifierDefaults.ctrl`)
+	 */
+	export function tryParseSimpleKeyCombo(description: string, modifierDefaults: SimpleKeyModifiers = { alt: false, shift: false, ctrl: false, meta: false }): SimpleKeyCombo {
+		if (description === undefined || description === null || description === "") return undefined;
 
 		var skc = {
 			mmkCode: undefined,
@@ -54,13 +96,13 @@ namespace mmk.keyboard {
 			meta:    modifierDefaults.meta
 		};
 
-		let remaining = desc;
+		let remaining = description;
 		while (remaining.length > 0) {
 			let nextSplit = remaining.indexOf('+', 1);
 			let fragment = nextSplit === -1 ? remaining : remaining.substr(0, nextSplit); // Everything before "+"
 			remaining    = nextSplit === -1 ? ""        : remaining.substr(nextSplit+1);  // Everything after (skipping) "+"
 
-			if ((nextSplit !== -1) && (remaining.length === 0)) { console.warn("Malformed simple key combo ends with combining '+':", desc); return undefined; }
+			if ((nextSplit !== -1) && (remaining.length === 0)) { console.warn("Malformed simple key combo ends with combining '+':", description); return undefined; }
 			console.assert(fragment.length > 0, "BUG: Should be impossible to reach with fragment.length === 0");
 
 			let firstChar = fragment[0];
@@ -72,7 +114,7 @@ namespace mmk.keyboard {
 			case "alt":                              skc.alt   = modVal; break;
 			case "meta": case "win": case "os":      skc.meta  = modVal; break;
 			default:
-				if (remaining.length>0) { console.warn("Unrecognized modifier key, or unexpected non-modifier mid-combination in:", desc); return undefined; }
+				if (remaining.length>0) { console.warn("Unrecognized modifier key, or unexpected non-modifier mid-combination in:", description); return undefined; }
 
 				let scanMatch = /^\[(.+)\]$/.exec(fragment);
 				if (scanMatch) fragment = scanMatch[1];
@@ -92,6 +134,9 @@ namespace mmk.keyboard {
 		return skc;
 	}
 
+	/**
+	 * Returns true if a given [[KeyboardEvent]] matches a given [[SimpleKeyCombo]]
+	 */
 	export function isSimpleKeyCombo(event: KeyboardEvent, skc: SimpleKeyCombo): boolean {
 		if (skc.mmkCode !== undefined && event.mmkCode !== skc.mmkCode) return false;
 		if (skc.mmkKey  !== undefined && event.mmkKey  !== skc.mmkKey ) return false;
@@ -104,6 +149,7 @@ namespace mmk.keyboard {
 		return true;
 	}
 
+	/** @hidden */
 	function equalSimpleKeyCombo(l: SimpleKeyCombo, r: SimpleKeyCombo): boolean {
 		return (l.mmkCode === r.mmkCode) &&
 			(l.mmkKey  === r.mmkKey ) &&
@@ -114,7 +160,9 @@ namespace mmk.keyboard {
 	}
 
 	// ~ Unit testing
+	/** @hidden */
 	function testEqual   (L: string, R: string) { let Lskc = parseSimpleKeyCombo(L); let Rskc = parseSimpleKeyCombo(R); let eq = equalSimpleKeyCombo(Lskc, Rskc); console.assert( eq, "Expected:",L,"(",Lskc,") ===",R,"(",Rskc,")" ); }
+	/** @hidden */
 	function testNotEqual(L: string, R: string) { let Lskc = parseSimpleKeyCombo(L); let Rskc = parseSimpleKeyCombo(R); let eq = equalSimpleKeyCombo(Lskc, Rskc); console.assert(!eq, "Expected:",L,"(",Lskc,") !==",R,"(",Rskc,")" ); }
 
 	testEqual   ("Ctrl+Alt+Del", "Control+Alt+Delete");

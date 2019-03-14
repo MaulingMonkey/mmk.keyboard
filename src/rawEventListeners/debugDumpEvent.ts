@@ -14,20 +14,6 @@
 */
 
 namespace mmk.keyboard {
-	export namespace config {
-		export var debugEvents           = true;
-		export var debugIgnoreRepeat     = false;
-
-		export var debugLog              = true;
-		export var debugLogOnlyDown      = true;
-		export var debugLogBaked         = true;
-		export var debugLogRaw           = true;
-		export var debugLogMods          = true;
-		export var debugLogOriginalEvent = false;
-
-		export var debugAssertKeyDefined = true;
-	} // namespace config
-
 	function padR(v: string, pad: string) { v = v !== undefined ? v : ""; return v + pad.substr(Math.min(v.length,pad.length)); }
 	function padL(v: string, pad: string) { v = v !== undefined ? v : ""; return pad.substr(Math.min(v.length,pad.length)) + v; }
 
@@ -73,7 +59,7 @@ namespace mmk.keyboard {
 
 		if (config.debugAssertKeyDefined) {
 			let KeyValues = Object.keys(Key);
-			if (ev.mmkCode !== undefined) {
+			if (ev.mmkCode !== undefined && !/0x/.test(ev.mmkCode)) {
 				let index = KeyValues.indexOf(ev.mmkCode);
 				console.assert(index !== -1,                    "mmkCode: Key."+ev.mmkCode+" === undefined");
 				console.assert(KeyValues[index] === ev.mmkCode, "mmkCode: Key."+ev.mmkCode+" === \""+KeyValues[index]+"\" !== \""+ev.mmkCode+"\"");

@@ -13,50 +13,30 @@
    limitations under the License.
 */
 
+// We need some event handlers immediately - waiting for "load" will cause our
+// fixup event handlers to execute too late (after any immediately registered
+// user defined event handlers!).  To ensure the final .js outputs things in a
+// sane order, we'll explicitly reference our *.ts dependencies for once.
+
+/// <reference path="../rawEventListeners/debugDumpEvent.ts" />
+/// <reference path="../rawEventListeners/fixEventMmkRepeat.ts" />
+/// <reference path="../rawEventListeners/fixEventMmkCode_FromCode.ts" />
+/// <reference path="../rawEventListeners/fixEventMmkKey_FromUpDownKeyCode.ts" />
+
 namespace mmk.keyboard {
-	// Primary event order.
-	addEventListener("load", function() {
-		// add mmkRepeat field
-		addRawEventListener(this, "keyup",    fixEventMmkRepeat);
-		addRawEventListener(this, "keydown",  fixEventMmkRepeat);
-		addRawEventListener(this, "keypress", fixEventMmkRepeat);
-
-		// add mmkCode field
-		addRawEventListener(this, "keyup",    fixEventMmkCode_FromCode);
-		addRawEventListener(this, "keydown",  fixEventMmkCode_FromCode);
-		addRawEventListener(this, "keypress", fixEventMmkCode_FromCode);
-
-		// add mmkKey field
-		addRawEventListener(this, "keyup",    fixEventMmkKey_FromUpDownKeyCode);
-		addRawEventListener(this, "keydown",  fixEventMmkKey_FromUpDownKeyCode);
-		addRawEventListener(this, "keypress", fixEventMmkKey_FromUpDownKeyCode);
-
-		// log to console based on mmk.keyboard.config settings
-		addRawEventListener(this, "keyup",    debugDumpKeyboardEvent);
-		addRawEventListener(this, "keydown",  debugDumpKeyboardEvent);
-		addRawEventListener(this, "keypress", debugDumpKeyboardEvent);
-		addRawEventListener(this, "blur",     debugDumpFocusEvent);
-
-		// ...?
-	});
-
+	/** @hidden */
 	interface LegacyEventTarget {
 		[type: string]: (ev: Event) => any;
 	}
 
+	/** @hidden */
 	const hasEventListener = "addEventListener" in window;
 
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: "load",     listener: (ev: Event        ) => any): void;
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: "keydown",  listener: (ev: KeyboardEvent) => any): void;
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: "keypress", listener: (ev: KeyboardEvent) => any): void;
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: "keyup",    listener: (ev: KeyboardEvent) => any): void;
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: "blur",     listener: (ev: FocusEvent   ) => any): void;
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: string,     listener: EventListenerOrEventListenerObject): void;
-
-	function addRawEventListener(target: EventTarget | LegacyEventTarget, type: string,     listener: EventListenerOrEventListenerObject): void {
+	/** @hidden */
+	function addRawEventListener<T extends string>(target: EventTarget | { [type: string]: (ev: Event) => any }, type: T, listener: EventListenerOrEventListenerObject): void {
 		if (hasEventListener) {
 			let t = <EventTarget>target;
-			t.addEventListener(type, listener);
+			t.addEventListener(type, listener, true);
 		} else {
 			let ontype = "on"+type;
 			let t = <LegacyEventTarget>target;
@@ -78,23 +58,26 @@ namespace mmk.keyboard {
 		}
 	}
 
-	// Debug junk
-	addEventListener("load", function() {
-		let target = document.getElementById("mmk-input-keyboard-debug-addRawEventListener-target");
-		if (!target) return; // No debug
+	// Primary event order - this is what requires those reference tags earlier.
 
-		// Dedupe should kill both of these:
-		let o = { handleEvent: function (e) { console.log("Event O", this); } };
-		let ef = function(e) { console.log("Event F", this); };
+	// add mmkRepeat field
+	addRawEventListener(window, "keyup",    fixEventMmkRepeat);
+	addRawEventListener(window, "keydown",  fixEventMmkRepeat);
+	addRawEventListener(window, "keypress", fixEventMmkRepeat);
 
-		addRawEventListener(target, "click", function(e) { console.log("Event 1", this); });
-		addRawEventListener(target, "click", function(e) { console.log("Event 2", this); });
-		addRawEventListener(target, "click", ef);
-		addRawEventListener(target, "click", o);
+	// add mmkCode field
+	addRawEventListener(window, "keyup",    fixEventMmkCode_FromCode);
+	addRawEventListener(window, "keydown",  fixEventMmkCode_FromCode);
+	addRawEventListener(window, "keypress", fixEventMmkCode_FromCode);
 
-		addRawEventListener(target, "click", function(e) { console.log("Event 1", this); }); // Should NOT be deduped
-		addRawEventListener(target, "click", function(e) { console.log("Event 2", this); }); // Should NOT be deduped
-		addRawEventListener(target, "click", ef); // Should be deduped
-		addRawEventListener(target, "click", o);  // Should be deduped
-	});
+	// add mmkKey field
+	addRawEventListener(window, "keyup",    fixEventMmkKey_FromUpDownKeyCode);
+	addRawEventListener(window, "keydown",  fixEventMmkKey_FromUpDownKeyCode);
+	addRawEventListener(window, "keypress", fixEventMmkKey_FromUpDownKeyCode);
+
+	// log to console based on mmk.keyboard.config settings
+	addRawEventListener(window, "keyup",    debugDumpKeyboardEvent);
+	addRawEventListener(window, "keydown",  debugDumpKeyboardEvent);
+	addRawEventListener(window, "keypress", debugDumpKeyboardEvent);
+	addRawEventListener(window, "blur",     debugDumpFocusEvent);
 } // namespace mmk.keyboard

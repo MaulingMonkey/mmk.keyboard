@@ -1,0 +1,29 @@
+{
+    "name": "@mmk/keyboard",
+    "displayName": "mmk.keyboard",
+    "version": "0.0.2",
+    "description": "Typescript keyboard API for consistent cross-browser keybinding, polling input for games, etc.",
+    "license": "Apache-2.0",
+    "keywords": [
+        "typescript",
+        "browser",
+        "keyboard",
+        "input"
+    ],
+    "author": "MaulingMonkey (https://maulingmonkey.com/)",
+    "bugs": "https://github.com/MaulingMonkey/mmk.keyboard/issues",
+    "homepage": "https://github.com/MaulingMonkey/mmk.keyboard",
+    "repository": "github:MaulingMonkey/mmk.keyboard",
+    "browser": "Scripts/mmk.keyboard/mmk.keyboard.js",
+    "types": "Scripts/mmk.keyboard/mmk.keyboard.d.ts",
+    "scripts": {
+        "build": "build/all.cmd"
+    },
+    "files": [
+        "Scripts/mmk.keyboard/*"
+    ],
+    "devDependencies": {
+        "typedoc": "^0.14.2",
+        "typedoc-plugin-sourcefile-url": "^1.0.4"
+    }
+}

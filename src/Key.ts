@@ -13,9 +13,13 @@
    limitations under the License.
 */
 
+/**
+ * Constants for all legal `mmkKey` / `mmkCode` values.  By using these values instead of string literals, you can avoid
+ * some typos causing match failures.  This is also used for normalization - e.g. `Key.Left === "ArrowLeft"`, not
+ * `"Left"`, since `mmk.keyboard` remaps `"Left"` to `"ArrowLeft"` for consistency across multiple browsers (some of
+ * which use the former, some of which use the latter.)
+ */
 namespace mmk.keyboard.Key {
-	// All legal mmkKey / mmkCode values.
-
 	// Function row
 	export const Escape      = "Escape"; export const Esc = "Escape";
 	export const F1          = "F1";

@@ -1,8 +1,12 @@
-﻿# mmk.keyboard
+﻿
+# mmk.keyboard
 
-MaulingMonKey's typescript keyboard API for consistent cross-browser keybinding, polling input for games, etc.
+<strong>M</strong>auling<strong>M</strong>on<strong>k</strong>ey's typescript keyboard API for consistent cross-browser keybinding, polling input for games, etc.
 
-License: [Apache 2.0](LICENSE.txt)
+* Source:  https://github.com/MaulingMonkey/mmk.keyboard/
+* Docs:    https://maulingmonkey.com/mmk.keyboard/docs/
+* Demo:    https://maulingmonkey.com/mmk.keyboard/demo/
+* License: [Apache 2.0](LICENSE.txt)
 
 
 

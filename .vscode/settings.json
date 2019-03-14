@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "Scripts/": true, // Output path all ready for nuget packaging
+        "node_modules/": true,
+    },
+    "editor.insertSpaces": false, // Project already uses tabs
+    "editor.rulers": [120]
+}

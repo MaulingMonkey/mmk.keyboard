@@ -38,19 +38,35 @@ namespace mmk.keyboard {
 	//
 	// [1] I'm open to API changes to make it easier to customize your own reservation lists without risking merge conflicts!
 
-
-
+	/**
+	 * A description of a keyboard combination reserved by the browser, system, or program with global keybindings.
+	 * 
+	 * Use [[systemConflictsWithSimpleKeyCombo]] to get a list of these that might conflict with your [[SimpleKeyCombo]]
+	 */
 	export interface ReservationEntry {
 		// Add severity?
-		keys:          string;
-		origin:        string; // e.g. "Media", "System", "Browser", "f.lux", etc.
 		// Consider adding more detailed origin info - e.g. browser(s), os(es), shell(s), app(s), etc.
-		action:        string;
 		// TODO: Add information about which combinations are overrideable or not
 
+		/** The key combination.  Example: `"Ctrl+Shift+Escape"` */
+		keys:          string;
+
+		/** The source of the key combination.  Examples:  `"Media"`, `"System"`, `"Browser"`, `"f.lux"`, etc. */
+		origin:        string;
+
+		/** What the key combination does.  Examples:  `"Start menu"`, `"Task Manager"`, etc. */
+		action:        string;
+
+		/**
+		 * Can this keyboard combination be overridden?
+		 * 
+		 * `true` for reservations like the browser's built in `F1` help action.
+		 * 
+		 * `false` for reservations like Window's `Ctrl+Alt+Delete` lock screen action.
+		 */
 		overrideable?: boolean;
 	}
-	// https://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
+	/** @hidden - https://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts */
 	const ReservedCombinations : ReservationEntry[] = [
 		// 6-key region
 		{ keys: "Ctrl+Alt+Ins",      origin: "Media",   action: "Play / Restart"    },
@@ -182,6 +198,23 @@ namespace mmk.keyboard {
 		}
 	});
 
+	/**
+	 * Return a list of any browser/system/global keybindings which might conflict with your simple key combination,
+	 * along with information about the `keys`, `origin`, and `action` that your combo conflicts with.  Some examples:
+	 * 
+	 * ```js
+	 * { keys: "Ctrl+Shift+B",      origin: "Browser", action: "Toggle bookmarks bar" }
+	 * { keys: "F1",                origin: "Browser", action: "Help"                 }
+	 * { keys: "Ctrl+Shift+Esc",    origin: "System",  action: "Task manager"         }
+	 * { keys: "Ctrl+Alt+Up",       origin: "Media",   action: "Player volume up"     }
+	 * { keys: "Alt+PageDown",      origin: "f.lux",   action: "Dim"                  }
+	 * ```
+	 * 
+	 * Some bindings will be fine to override (you may not have f.lux installed at all), others can't possibly be
+	 * overridden at all (`Ctrl+Alt+Del`).
+	 * 
+	 * @param skc Your simple key combination that might conflict with system keybindings.
+	 */
 	export function systemConflictsWithSimpleKeyCombo(skc: SimpleKeyCombo): ReservationEntry[] {
 		return ReservedCombinations.filter(re => {
 			let reSkc = parseSimpleKeyCombo(re.keys);

@@ -1,4 +1,4 @@
-﻿/* Copyright 2017 MaulingMonkey
+/* Copyright 2017 MaulingMonkey
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
    limitations under the License.
 */
 
-// lib.d.ts provides an incompleteish definition of KeyboardEvent
-interface KeyboardEvent {
-	code:    string; // Present in Chrome, but not in IE11
-
-	mmkRepeat: boolean; // IE11 lies and also makes 'repeat' immutable.
-	mmkCode?:  string;  // "Physical" code - may be unavailable (e.g. IE11 gives us no way to get at real physical codes)
-	mmkKey?:   string;  // "Logical"  code
-}
+/**
+ * General namespace for <strong>M</strong>auling<strong>M</strong>on<strong>k</strong>ey's typescript projects.
+ * 
+ * You can find more typescript projects by him
+ * [on github](https://github.com/MaulingMonkey?utf8=%E2%9C%93&tab=repositories&q=&type=&language=typescript)
+ * or maybe [on his homepage](https://maulingmonkey.com/)
+ */
+namespace mmk {}
