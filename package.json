@@ -1,6 +1,5 @@
 {
-    "name": "@mmk/keyboard",
-    "displayName": "mmk.keyboard",
+    "name": "@maulingmonkey/keyboard",
     "version": "0.0.2",
     "description": "Typescript keyboard API for consistent cross-browser keybinding, polling input for games, etc.",
     "license": "Apache-2.0",
@@ -10,19 +9,23 @@
         "keyboard",
         "input"
     ],
-    "author": "MaulingMonkey (https://maulingmonkey.com/)",
+    "author": "MaulingMonkey <npm@maulingmonkey.com> (https://maulingmonkey.com/)",
     "bugs": "https://github.com/MaulingMonkey/mmk.keyboard/issues",
-    "homepage": "https://github.com/MaulingMonkey/mmk.keyboard",
+    "homepage": "https://github.com/MaulingMonkey/mmk.keyboard#readme",
     "repository": "github:MaulingMonkey/mmk.keyboard",
-    "browser": "Scripts/mmk.keyboard/mmk.keyboard.js",
-    "types": "Scripts/mmk.keyboard/mmk.keyboard.d.ts",
-    "scripts": {
-        "build": "build/all.cmd"
-    },
+    "browser": "global.js",
+    "types": "global.d.ts",
+    "main": "global.js",
     "files": [
-        "Scripts/mmk.keyboard/*"
+        "global.d.ts",
+        "global.js",
+        "LICENSE.txt",
+        "modular.d.ts",
+        "modular.js",
+        "Readme.md"
     ],
     "devDependencies": {
+        "@maulingmonkey/modularize-namespace": "0.0.2",
         "typedoc": "^0.14.2",
         "typedoc-plugin-sourcefile-url": "^1.0.4"
     }

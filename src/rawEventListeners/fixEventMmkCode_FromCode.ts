@@ -15,7 +15,7 @@
 
 namespace mmk.keyboard {
 	// The numpad is particularly finicky
-	const code_key_to_mmkCode = {
+	const code_key_to_mmkCode : {[code_key: string]: string} = {
 		"Numpad1 End":          "NumpadEnd",
 		"Numpad2 ArrowDown":    "NumpadDown",
 		"Numpad3 PageDown":     "NumpadPageDown",
@@ -30,7 +30,7 @@ namespace mmk.keyboard {
 	};
 
 	// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
-	const code_to_mmkCode = {
+	const code_to_mmkCode : {[code: string]: string} = {
 		"Left":       "ArrowLeft",
 		"Right":      "ArrowRight",
 		"Up":         "ArrowUp",

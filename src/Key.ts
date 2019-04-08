@@ -20,6 +20,8 @@
  * which use the former, some of which use the latter.)
  */
 namespace mmk.keyboard.Key {
+	const self : {[key: string]: string} = Key;
+
 	// Function row
 	export const Escape      = "Escape"; export const Esc = "Escape";
 	export const F1          = "F1";
@@ -39,19 +41,19 @@ namespace mmk.keyboard.Key {
 	export const ScrollLock  = "ScrollLock";
 
 	// Digits Row
-	export const Backquote = "Backquote"; Key["`"] = "Backquote";
-	export const Digit0 = "Digit0"; export const D0 = "Digit0"; Key["0"] = "Digit0";
-	export const Digit1 = "Digit1"; export const D1 = "Digit1"; Key["1"] = "Digit1";
-	export const Digit2 = "Digit2"; export const D2 = "Digit2"; Key["2"] = "Digit2";
-	export const Digit3 = "Digit3"; export const D3 = "Digit3"; Key["3"] = "Digit3";
-	export const Digit4 = "Digit4"; export const D4 = "Digit4"; Key["4"] = "Digit4";
-	export const Digit5 = "Digit5"; export const D5 = "Digit5"; Key["5"] = "Digit5";
-	export const Digit6 = "Digit6"; export const D6 = "Digit6"; Key["6"] = "Digit6";
-	export const Digit7 = "Digit7"; export const D7 = "Digit7"; Key["7"] = "Digit7";
-	export const Digit8 = "Digit8"; export const D8 = "Digit8"; Key["8"] = "Digit8";
-	export const Digit9 = "Digit9"; export const D9 = "Digit9"; Key["9"] = "Digit9";
-	export const Minus     = "Minus"; Key["-"] = "Minus";
-	export const Equal     = "Equal"; Key["="] = "Equal";
+	export const Backquote = "Backquote"; self["`"] = "Backquote";
+	export const Digit0 = "Digit0"; export const D0 = "Digit0"; self["0"] = "Digit0";
+	export const Digit1 = "Digit1"; export const D1 = "Digit1"; self["1"] = "Digit1";
+	export const Digit2 = "Digit2"; export const D2 = "Digit2"; self["2"] = "Digit2";
+	export const Digit3 = "Digit3"; export const D3 = "Digit3"; self["3"] = "Digit3";
+	export const Digit4 = "Digit4"; export const D4 = "Digit4"; self["4"] = "Digit4";
+	export const Digit5 = "Digit5"; export const D5 = "Digit5"; self["5"] = "Digit5";
+	export const Digit6 = "Digit6"; export const D6 = "Digit6"; self["6"] = "Digit6";
+	export const Digit7 = "Digit7"; export const D7 = "Digit7"; self["7"] = "Digit7";
+	export const Digit8 = "Digit8"; export const D8 = "Digit8"; self["8"] = "Digit8";
+	export const Digit9 = "Digit9"; export const D9 = "Digit9"; self["9"] = "Digit9";
+	export const Minus     = "Minus"; self["-"] = "Minus";
+	export const Equal     = "Equal"; self["="] = "Equal";
 	export const Backspace = "Backspace";
 
 	// (Semi-)central alpha region
@@ -69,14 +71,14 @@ namespace mmk.keyboard.Key {
 	export const KeyP = "KeyP"; export const KeyQ = "KeyQ"; export const KeyR = "KeyR"; export const KeyS = "KeyS"; export const KeyT = "KeyT";
 	export const KeyU = "KeyU"; export const KeyV = "KeyV"; export const KeyW = "KeyW"; export const KeyX = "KeyX"; export const KeyY = "KeyY";
 	export const KeyZ = "KeyZ";
-	export const BracketLeft  = "BracketLeft";   Key["["] = "BracketLeft";
-	export const BracketRight = "BracketRight";  Key["]"] = "BracketRight";
-	export const Backslash    = "Backslash";     Key["\\"] = "Backslash";
-	export const Semicolon    = "Semicolon";     Key[";"] = "Semicolon";
-	export const Quote        = "Quote";         Key["'"] = "Quote";
-	export const Comma        = "Comma";         Key[","] = "Comma";
-	export const Period       = "Period";        Key["."] = "Period";
-	export const Slash        = "Slash";         Key["/"] = "Slash";
+	export const BracketLeft  = "BracketLeft";   self["["] = "BracketLeft";
+	export const BracketRight = "BracketRight";  self["]"] = "BracketRight";
+	export const Backslash    = "Backslash";     self["\\"] = "Backslash";
+	export const Semicolon    = "Semicolon";     self[";"] = "Semicolon";
+	export const Quote        = "Quote";         self["'"] = "Quote";
+	export const Comma        = "Comma";         self[","] = "Comma";
+	export const Period       = "Period";        self["."] = "Period";
+	export const Slash        = "Slash";         self["/"] = "Slash";
 	export const Enter        = "Enter";
 
 	// Alpha edges and other control keys

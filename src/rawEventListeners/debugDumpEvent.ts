@@ -28,8 +28,8 @@ namespace mmk.keyboard {
 			if (config.debugLogBaked) log.push(
 				"| mmk",
 				ev.mmkRepeat ? "\u21BB" : " ",
-				"code",   padR(ev.mmkCode,  "            "),
-				"key",    padR(ev.mmkKey,   "            ")
+				"code",   padR(ev.mmkCode || "",  "            "),
+				"key",    padR(ev.mmkKey || "",   "            ")
 			);
 
 			if (config.debugLogRaw) log.push(
@@ -65,7 +65,7 @@ namespace mmk.keyboard {
 				console.assert(KeyValues[index] === ev.mmkCode, "mmkCode: Key."+ev.mmkCode+" === \""+KeyValues[index]+"\" !== \""+ev.mmkCode+"\"");
 			}
 			if (ev.type !== "keypress" || ev.mmkKey !== undefined) {
-				let index = KeyValues.indexOf(ev.mmkCode);
+				let index = KeyValues.indexOf(ev.mmkCode || "");
 				console.assert(index !== -1,                   "mmkKey: Key."+ev.mmkKey+" === undefined");
 				console.assert(KeyValues[index] === ev.mmkKey, "mmkKey: Key."+ev.mmkKey+" === \""+KeyValues[index]+"\" !== \""+ev.mmkKey+"\"");
 			}

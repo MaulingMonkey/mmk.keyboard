@@ -14,7 +14,7 @@
 */
 
 namespace mmk.keyboard {
-	const keyCode_key_to_mmkCode = {
+	const keyCode_key_to_mmkCode : {[keyCode_key: string]: string} = {
 		//"40 Down":  "NumpadDown",
 		//"37 Left":  "NumpadLeft",
 		//"12 Clear": "NumpadClear",
@@ -22,7 +22,7 @@ namespace mmk.keyboard {
 	};
 
 	// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
-	const keyupdown_keyCode_to_mmkKey = {
+	const keyupdown_keyCode_to_mmkKey : {[keyCode: number]: string} = {
 		0x03: "Cancel", // Ctrl+Pause = Break?
 		0x06: "Help",
 		0x08: "Backspace",
@@ -166,7 +166,7 @@ namespace mmk.keyboard {
 		0xde: "Quote",
 	};
 
-	const mac_keyCode_to_mmkKey = {
+	const mac_keyCode_to_mmkKey : {[keyCode: number]: string} = {
 		0x0C: "NumLock", 0xBB: "NumpadEqual",
 		0x2C: "F13",     0x7C: "PrintScreen",
 		0x91: "F14",     0x7D: "ScrollLock",
@@ -174,7 +174,7 @@ namespace mmk.keyboard {
 	};
 
 	// This is just easier to fix up after the fact
-	const mmkKey_to_mmkKey = {
+	const mmkKey_to_mmkKey : {[key: string]: string} = {
 		"NumpadNumlock": "Numlock",
 		"NumpadDel":     "NumpadDelete",
 	};

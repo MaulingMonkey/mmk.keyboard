@@ -71,7 +71,7 @@ namespace mmk.keyboard {
 	export function parseSimpleKeyCombo(desc: string, modifierDefaults: SimpleKeyModifiers = { alt: false, shift: false, ctrl: false, meta: false }): SimpleKeyCombo {
 		let r = tryParseSimpleKeyCombo(desc, modifierDefaults);
 		console.assert(!!r, "parseSimpleKeyCombo failed to parse key combination:", desc);
-		return r;
+		return r!;
 	}
 
 	/**
@@ -84,10 +84,10 @@ namespace mmk.keyboard {
 	 * or use `!` to specify a modifier *cannot* be held (e.g. `"!Ctrl+Shift+B"` demands `Ctrl` is not held, ignoring
 	 * `modifierDefaults.ctrl`)
 	 */
-	export function tryParseSimpleKeyCombo(description: string, modifierDefaults: SimpleKeyModifiers = { alt: false, shift: false, ctrl: false, meta: false }): SimpleKeyCombo {
+	export function tryParseSimpleKeyCombo(description: string, modifierDefaults: SimpleKeyModifiers = { alt: false, shift: false, ctrl: false, meta: false }): SimpleKeyCombo | undefined {
 		if (description === undefined || description === null || description === "") return undefined;
 
-		var skc = {
+		var skc : SimpleKeyCombo = {
 			mmkCode: undefined,
 			mmkKey:  undefined,
 			alt:     modifierDefaults.alt,
@@ -122,7 +122,7 @@ namespace mmk.keyboard {
 				let keys = Object.keys(Key);
 				let i = keys.indexOf(fragment);
 				if (i === -1) { console.warn("Unrecognized key:", fragment); return undefined; }
-				let key = Key[fragment]; // Normalize
+				let key = (Key as {[key: string]: string})[fragment]; // Normalize
 
 				if (scanMatch) skc.mmkCode = key;
 				else           skc.mmkKey  = key;

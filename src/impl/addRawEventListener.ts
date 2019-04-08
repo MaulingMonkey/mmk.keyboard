@@ -33,7 +33,7 @@ namespace mmk.keyboard {
 	const hasEventListener = "addEventListener" in window;
 
 	/** @hidden */
-	function addRawEventListener<T extends string>(target: EventTarget | { [type: string]: (ev: Event) => any }, type: T, listener: EventListenerOrEventListenerObject): void {
+	function addRawEventListener<T extends keyof GlobalEventHandlersEventMap>(target: EventTarget | { [type: string]: (ev: Event) => any }, type: T, listener: ((evt: GlobalEventHandlersEventMap[T]) => void) | EventListenerObject): void {
 		if (hasEventListener) {
 			let t = <EventTarget>target;
 			t.addEventListener(type, listener, true);

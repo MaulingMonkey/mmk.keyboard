@@ -1,10 +1,12 @@
-Thumbs.db
+/.projnfo/
+/demo/*.js
+/demo/*.js.map
+/docs/
+/node_modules/
 
-*.sdf
-*.opendb
-*.user
+/global.*
+/modular.*
+/package-lock.json
 
-.projnfo/
-.vs/
-node_modules/
-packages/
+*.tgz
+*.tsbuildinfo

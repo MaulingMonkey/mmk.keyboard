@@ -25,7 +25,7 @@ namespace mmk.keyboard {
 
 	} // namespace config
 
-	let lastEvents : {[id: string]: KeyboardEvent} = {
+	let lastEvents : {[id: string]: KeyboardEvent | null | undefined} = {
 		// NOTE WELL: fixEventRepeat cares about the difference between null / undefined!  I'm sorry.
 		"keydown":  null,
 		"keypress": null
