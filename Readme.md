@@ -11,7 +11,7 @@
 
 # What?  Why?
 
-The vanilla browser gamepad APIs are pretty inconsistent about a lot of things.  IE11's keyboardEvent.repeat lies,
+The vanilla browser keyboard APIs are pretty inconsistent about a lot of things.  IE11's keyboardEvent.repeat lies,
 `.code` may or may not be available - and if present, has different names for the same keys across different browsers,
 vanilla numpad events are annoying to differentiate from other hotkeys (e.g. `Shift`+`Numpad1` maps to `key: "End"`),
 etc.) which is annoying for roguelikes...
