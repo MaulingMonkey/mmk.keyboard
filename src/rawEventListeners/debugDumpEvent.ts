@@ -73,6 +73,8 @@ namespace mmk.keyboard {
 	}
 
 	export function debugDumpFocusEvent(ev: FocusEvent) {
+		if (!config.debugEvents) return;
+
 		console.log("semi-raw "+ev.type);
 	}
 } // namespace mmk.keyboard
